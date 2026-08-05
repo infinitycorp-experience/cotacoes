@@ -423,9 +423,9 @@
         "contactTel": "51 9994-0556",
         "contactEmail": "",
         "date": "04/08/2026",
-        "payment": "",
-        "delivery": "",
-        "warranty": "",
+        "payment": "28 Dias",
+        "delivery": "3 Dias Úteis",
+        "warranty": "12 Meses",
         "obs": "",
         "grades": {
           "A": {
@@ -441,6 +441,28 @@
                 "10",
                 1,
                 9010
+              ],
+              [
+                "TECNOLOG",
+                "TEC156C",
+                "CELERONJ6412",
+                "",
+                "8",
+                "256",
+                "16",
+                1,
+                12820
+              ],
+              [
+                "TECNOLOG",
+                "TECMPCI5",
+                "I5",
+                "1235U",
+                "8",
+                "256",
+                "N/A",
+                1,
+                7830
               ]
             ]
           },
