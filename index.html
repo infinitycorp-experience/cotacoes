@@ -175,7 +175,7 @@ body{
 .kpi .value{font-weight:900;font-size:28px;letter-spacing:-.03em;margin-top:2px}
 .kpi .delta{font-size:11px;margin-top:6px;color:var(--green);display:inline-flex;align-items:center;gap:4px;font-weight:600}
 
-/* ── MINHAS COTAÇÕES ── */
+/* ── COTAÇÕES ── */
 .cotacoes-list-header{
   display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;
 }
@@ -676,7 +676,7 @@ body{
     </div>
     <div class="nav-item" data-view="cotacoes">
       <div class="ico">📋</div>
-      <div><div class="label">Minhas Cotações</div><div class="meta" id="nav-cotacoes-count">0 cotações</div></div>
+      <div><div class="label">Cotações</div><div class="meta" id="nav-cotacoes-count">0 cotações</div></div>
     </div>
     <div class="nav-divider"></div>
     <div class="nav-item" data-view="allitems">
@@ -706,13 +706,13 @@ body{
       <div class="kpis" id="dashboard-kpis"></div>
       <div style="margin-bottom:18px;display:flex;justify-content:space-between;align-items:center"><span style="font-weight:700;font-size:14px;color:var(--ink)">Cotações por Tipo</span><span style="font-size:11px;color:var(--muted);font-weight:500">Clique para ver os fornecedores</span></div>
       <div class="cotacao-cards-grid" id="dashboard-cotacoes-cards"></div>
-      <div style="margin-bottom:14px"><span style="font-weight:700;font-size:14px;color:var(--ink)">Últimos Fornecedores</span></div>
+      <div style="margin-bottom:14px"><span style="font-weight:700;font-size:14px;color:var(--ink)">Últimos Fornecedores Cadastrados</span></div>
       <div class="suppliers-grid" id="dashboard-recent-suppliers"></div>
     </section>
 
-    <!-- MINHAS COTAÇÕES -->
+    <!-- COTAÇÕES -->
     <section class="view" id="view-cotacoes">
-      <div class="cotacoes-list-header"><h2>📋 Minhas Cotações</h2><button class="btn primary" onclick="openCotacaoModal()">＋ Nova Cotação</button></div>
+      <div class="cotacoes-list-header"><h2>📋 Cotações</h2><button class="btn primary" onclick="openCotacaoModal()">＋ Nova Cotação</button></div>
       <div class="cotacoes-cards-full" id="cotacoes-full-list"></div>
       <div class="empty-state" id="cotacoes-empty" style="display:none"><div class="icon">📋</div><div class="title">Nenhuma cotação criada</div><div class="desc">Clique em <strong>"Nova Cotação"</strong> para criar sua primeira cotação.</div><button class="btn primary" style="margin-top:14px" onclick="openCotacaoModal()">Criar Primeira Cotação</button></div>
     </section>
@@ -738,7 +738,22 @@ body{
       </div>
       <div style="overflow-x:auto">
         <table class="tbl" id="all-items-table" style="min-width:1250px">
-          <thead><tr><th>Cotação</th><th>Fornecedor</th><th>Grade</th><th>Marca</th><th>Modelo</th><th class="sortable-th" onclick="sortAllItems('proc')">Proc. <span class="sort-arrow">⇅</span></th><th class="sortable-th" onclick="sortAllItems('ger')">Ger. <span class="sort-arrow">⇅</span></th><th class="sortable-th" onclick="sortAllItems('mem')">Mem. <span class="sort-arrow">⇅</span></th><th class="sortable-th" onclick="sortAllItems('ssd')">SSD <span class="sort-arrow">⇅</span></th><th class="sortable-th" onclick="sortAllItems('tela')">Tela <span class="sort-arrow">⇅</span></th><th class="sortable-th" onclick="sortAllItems('qtd')">Qtd <span class="sort-arrow">⇅</span></th><th class="sortable-th" onclick="sortAllItems('valor')">Vlr Unit. <span class="sort-arrow">⇅</span></th><th>Total</th><th style="width:100px">Anexos</th></tr></thead>
+          <thead><tr>
+            <th class="sortable-th" onclick="sortAllItems('cotacaoTipo')">Cotação <span class="sort-arrow">⇅</span></th>
+            <th class="sortable-th" onclick="sortAllItems('supplierName')">Fornecedor <span class="sort-arrow">⇅</span></th>
+            <th class="sortable-th" onclick="sortAllItems('grade')">Grade <span class="sort-arrow">⇅</span></th>
+            <th class="sortable-th" onclick="sortAllItems('marca')">Marca <span class="sort-arrow">⇅</span></th>
+            <th class="sortable-th" onclick="sortAllItems('modelo')">Modelo <span class="sort-arrow">⇅</span></th>
+            <th class="sortable-th" onclick="sortAllItems('proc')">Proc. <span class="sort-arrow">⇅</span></th>
+            <th class="sortable-th" onclick="sortAllItems('ger')">Ger. <span class="sort-arrow">⇅</span></th>
+            <th class="sortable-th" onclick="sortAllItems('mem')">Mem. <span class="sort-arrow">⇅</span></th>
+            <th class="sortable-th" onclick="sortAllItems('ssd')">SSD <span class="sort-arrow">⇅</span></th>
+            <th class="sortable-th" onclick="sortAllItems('tela')">Tela <span class="sort-arrow">⇅</span></th>
+            <th class="sortable-th" onclick="sortAllItems('qtd')">Qtd <span class="sort-arrow">⇅</span></th>
+            <th class="sortable-th" onclick="sortAllItems('valor')">Vlr Unit. <span class="sort-arrow">⇅</span></th>
+            <th class="sortable-th" onclick="sortAllItems('total')">Total <span class="sort-arrow">⇅</span></th>
+            <th style="width:100px">Anexos</th>
+          </tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -746,7 +761,14 @@ body{
 
     <!-- COMPARATIVO -->
     <section class="view" id="view-compare">
-      <div class="view-head"><div class="view-head-left"><h1>Comparativo por Produto</h1><p>Mesmo produto entre fornecedores da cotação ativa</p></div></div>
+      <div class="view-head">
+        <div class="view-head-left"><h1>Comparativo por Produto</h1><p>Mesmo produto entre fornecedores</p></div>
+        <div class="view-head-right">
+          <select id="compare-cotacao-select" onchange="onCompareCotacaoChange()" style="padding:8px 12px;background:#f8fafc;border:1px solid var(--line);border-radius:10px;color:var(--ink);font-family:'Inter';font-size:12.5px;">
+            <option value="">Selecione uma cotação...</option>
+          </select>
+        </div>
+      </div>
       <div id="compare-content"></div>
     </section>
 
@@ -815,6 +837,7 @@ let editingId = null;
 let tempLogoBase64 = '';
 let allItemsSort = { col: null, asc: true };
 let allItemsFlat = [];
+let activeCompareCotacaoId = null;
 
 const PRESET_CONFIG = {
   user: 'infinitycorp-experience',
@@ -954,7 +977,7 @@ function base64ToUtf8(b64){
   }
 }
 
-// ── loadFromGitHub CORRIGIDO ──
+// ── loadFromGitHub ──
 async function loadFromGitHub(){
   if(!isConfigured()){ updateSyncStatus(false); return false; }
   try {
@@ -1177,6 +1200,7 @@ async function deleteCotacao(id){
 
   cotacoes = cotacoes.filter(c => c.id !== id);
   if(activeCotacaoId === id) activeCotacaoId = null;
+  if(activeCompareCotacaoId === id) activeCompareCotacaoId = null;
   const ok = await saveToGitHub(); renderAll();
   if(!activeCotacaoId) navigateToView('cotacoes');
   showToast(ok?'Cotação excluída.':'Excluída localmente. ⚠️','success');
@@ -1210,7 +1234,7 @@ document.querySelectorAll('.nav-item[data-view]').forEach(el => {
   el.addEventListener('click', () => navigateToView(el.dataset.view));
 });
 
-/* ── RENDER: MINHAS COTAÇÕES ── */
+/* ── RENDER: COTAÇÕES ── */
 function renderCotacoesView(){
   const listEl = document.getElementById('cotacoes-full-list');
   const emptyEl = document.getElementById('cotacoes-empty');
@@ -1225,10 +1249,11 @@ function renderCotacoesView(){
     const statusLabel=c.status==='concluida'?'Concluída':'Em andamento';
     const statusClass=c.status==='concluida'?'status-concluida':'status-em_andamento';
     const desc=c.descricao||'Sem descrição', fornCount=c.fornecedores.length;
+    const fornComResposta = c.fornecedores.filter(s => s.status === 'Cotação recebida' || s.status === 'Finalizado').length;
     return `<div class="cotacao-row-card ${tipoClass}" onclick="navigateToCotacao('${c.id}')">
       <div class="cotacao-row-icon">${icon}</div>
       <div class="cotacao-row-info"><h3>${escapeHTML(c.tipo)}<span class="tipo-badge-sm">${c.data}</span><span class="status-badge ${statusClass}"><span class="status-dot"></span>${statusLabel}</span></h3><div class="cotacao-desc">${escapeHTML(desc)}</div></div>
-      <div class="cotacao-row-meta"><span class="cotacao-date-tag">${c.data}</span><span class="forn-count">${fornCount} fornecedor${fornCount!==1?'es':''}</span></div>
+      <div class="cotacao-row-meta"><span class="cotacao-date-tag">${c.data}</span><span class="forn-count">${fornComResposta} de ${fornCount} Cotações Recebidas</span></div>
       <div class="cotacao-row-actions" onclick="event.stopPropagation()"><button class="btn-icon-sm" onclick="openCotacaoModal('${c.id}')" title="Editar">✎</button><button class="btn-icon-sm del" onclick="deleteCotacao('${c.id}')" title="Excluir">✕</button></div></div>`;
   }).join('');
 }
@@ -1257,12 +1282,13 @@ function renderDashboard(){
     cardsEl.innerHTML=tiposUnicos.map(tipo=>{
       const cotsDoTipo=cotacoes.filter(c=>c.tipo===tipo);
       const tf=cotsDoTipo.reduce((a,c)=>a+c.fornecedores.length,0);
+      const tfRespondidos=cotsDoTipo.reduce((a,c)=>a+c.fornecedores.filter(s=>s.status==='Cotação recebida'||s.status==='Finalizado').length,0);
       const tm=cotsDoTipo.reduce((a,c)=>a+c.fornecedores.reduce((b,s)=>b+countModelsAll(s),0),0);
-      return `<div class="cotacao-card ${getTipoClass(tipo)}" onclick="selecionarPrimeiraCotacaoDoTipo('${escapeHTML(tipo)}')"><div class="cotacao-tipo">${getTipoIcon(tipo)} ${tipo}</div><div class="cotacao-data">${cotsDoTipo.length} cotação${cotsDoTipo.length!==1?'ões':''} · ${cotsDoTipo.map(c=>c.data).join(', ')}</div><div class="cotacao-stats"><span><strong>${tf}</strong>fornecedores</span><span><strong>${tm}</strong>modelos</span></div></div>`;
+      return `<div class="cotacao-card ${getTipoClass(tipo)}" onclick="selecionarPrimeiraCotacaoDoTipo('${escapeHTML(tipo)}')"><div class="cotacao-tipo">${getTipoIcon(tipo)} ${tipo}</div><div class="cotacao-data">${cotsDoTipo.length} cotação${cotsDoTipo.length!==1?'ões':''} · ${cotsDoTipo.map(c=>c.data).join(', ')}</div><div class="cotacao-stats"><span><strong>${tf}</strong>Fornecedores</span><span><strong>${tfRespondidos} de ${tf}</strong>Cotações Recebidas</span><span><strong>${tm}</strong>Modelos</span></div></div>`;
     }).join('');
   }
   const todosForn=[];cotacoes.forEach(cot=>{cot.fornecedores.forEach(s=>todosForn.push({...s,_cotacaoTipo:cot.tipo,_cotacaoData:cot.data,_cotacaoId:cot.id}));});
-  const recentes=todosForn.slice(-6).reverse();
+  const recentes=todosForn.slice(-4).reverse();
   const recEl=document.getElementById('dashboard-recent-suppliers');
   recEl.innerHTML=recentes.length?recentes.map(s=>supplierCardHTML(s)).join(''):'<div class="empty-state"><div class="icon">◉</div><div class="title">Nenhum fornecedor</div><div class="desc">Selecione uma cotação e adicione fornecedores.</div></div>';
 }
@@ -1726,9 +1752,9 @@ function renderAllItems(){
   const selForn=document.getElementById('filter-supplier');const curForn=selForn.value;const allS=[];cotacoes.forEach(c=>c.fornecedores.forEach(s=>{if(!s.notWorking)allS.push(s);}));selForn.innerHTML='<option value="all">Todos os fornecedores</option>'+allS.map(s=>`<option value="${s.id}">${escapeHTML(s.name)}</option>`).join('');selForn.value=curForn;
   let items=buildFlatItems();if(fc!=='all')items=items.filter(i=>i.cotacaoId===fc);if(fs!=='all')items=items.filter(i=>i.supplierId===fs);if(fg!=='all')items=items.filter(i=>i.grade===fg);
   if(fb){items=items.filter(i=>i.marca.toLowerCase().includes(fb)||i.modelo.toLowerCase().includes(fb)||i.proc.toLowerCase().includes(fb)||i.ger.toLowerCase().includes(fb)||i.mem.toLowerCase().includes(fb)||i.ssd.toLowerCase().includes(fb)||i.tela.toLowerCase().includes(fb)||i.supplierName.toLowerCase().includes(fb)||i.cotacaoTipo.toLowerCase().includes(fb));}
-  if(allItemsSort.col){const col=allItemsSort.col,asc=allItemsSort.asc;items.sort((a,b)=>{let va,vb;if(col==='qtd'||col==='valor'){va=a[col]||0;vb=b[col]||0;}else{va=(a[col]||'').toString().toLowerCase();vb=(b[col]||'').toString().toLowerCase();}if(va<vb)return asc?-1:1;if(va>vb)return asc?1:-1;return 0;});}
+  if(allItemsSort.col){const col=allItemsSort.col,asc=allItemsSort.asc;items.sort((a,b)=>{let va,vb;if(col==='qtd'||col==='valor'||col==='total'){va=a[col]||0;vb=b[col]||0;}else{va=(a[col]||'').toString().toLowerCase();vb=(b[col]||'').toString().toLowerCase();}if(va<vb)return asc?-1:1;if(va>vb)return asc?1:-1;return 0;});}
   allItemsFlat=items;document.getElementById('all-items-count').textContent=items.length+' equipamento'+(items.length!==1?'s':'');document.getElementById('nav-items-count').textContent=items.length+' equipamentos';
-  document.querySelectorAll('.sortable-th').forEach(th=>{th.classList.remove('active');const match=th.getAttribute('onclick')?.match(/sortAllItems\('(\w+)'\)/);if(match&&match[1]===allItemsSort.col)th.classList.add('active');});
+  document.querySelectorAll('#all-items-table .sortable-th').forEach(th=>{th.classList.remove('active');const match=th.getAttribute('onclick')?.match(/sortAllItems\('(\w+)'\)/);if(match&&match[1]===allItemsSort.col)th.classList.add('active');});
   const tbody=document.querySelector('#all-items-table tbody');
   if(!items.length){tbody.innerHTML='<tr><td colspan="14" style="text-align:center;padding:32px;color:var(--muted)">Nenhum equipamento encontrado.</td></tr>';return;}
   tbody.innerHTML=items.map(i=>{
@@ -1750,17 +1776,73 @@ function exportAllItemsXlsx(){
 }
 
 /* ── COMPARATIVO ── */
+function onCompareCotacaoChange(){
+  activeCompareCotacaoId = document.getElementById('compare-cotacao-select').value || null;
+  renderCompare();
+}
 function renderCompare(){
   const el=document.getElementById('compare-content');
-  let suppliers=[];if(activeCotacaoId){const cot=getActiveCotacao();if(cot)suppliers=cot.fornecedores.filter(s=>!s.notWorking);}
-  if(!activeCotacaoId){el.innerHTML='<div class="empty-state"><div class="icon">◐</div><div class="title">Selecione uma cotação</div><div class="desc">O comparativo analisa os mesmos produtos entre fornecedores dentro de uma cotação ativa.</div></div>';return;}
-  if(suppliers.length<2){el.innerHTML='<div class="empty-state"><div class="icon">◐</div><div class="title">Comparativo indisponível</div><div class="desc">É necessário pelo menos 2 fornecedores ativos na cotação selecionada.</div></div>';return;}
+  const selectEl=document.getElementById('compare-cotacao-select');
+
+  // Preencher dropdown
+  const curVal = selectEl.value;
+  selectEl.innerHTML = '<option value="">Selecione uma cotação...</option>' +
+    cotacoes.map(c => {
+      const fornAtivos = c.fornecedores.filter(s => !s.notWorking).length;
+      return `<option value="${c.id}"${c.id===activeCompareCotacaoId?' selected':''}>${getTipoIcon(c.tipo)} ${c.tipo} · ${c.data} (${fornAtivos} forn.)</option>`;
+    }).join('');
+
+  // Auto-selecionar se nada selecionado e houver cotação com >= 2 fornecedores
+  if(!activeCompareCotacaoId){
+    const best = cotacoes.find(c => c.fornecedores.filter(s => !s.notWorking).length >= 2);
+    if(best){ activeCompareCotacaoId = best.id; selectEl.value = best.id; }
+  }
+
+  if(!activeCompareCotacaoId){
+    el.innerHTML='<div class="empty-state"><div class="icon">◐</div><div class="title">Selecione uma cotação</div><div class="desc">Use o seletor acima para escolher uma cotação com pelo menos 2 fornecedores ativos.</div></div>';
+    return;
+  }
+
+  const cot = cotacoes.find(c => c.id === activeCompareCotacaoId);
+  if(!cot){ el.innerHTML='<div class="empty-state"><div class="icon">◐</div><div class="title">Cotação não encontrada</div></div>'; return; }
+
+  const suppliers=cot.fornecedores.filter(s=>!s.notWorking);
+  if(suppliers.length<2){el.innerHTML='<div class="empty-state"><div class="icon">◐</div><div class="title">Comparativo indisponível</div><div class="desc">É necessário pelo menos 2 fornecedores ativos em <strong>'+escapeHTML(cot.tipo)+' · '+cot.data+'</strong>.</div></div>';return;}
+
   const productMap={};suppliers.forEach(s=>{const grades=s.grades||{};['A','B','C'].forEach(g=>{if(grades[g]&&grades[g].items){grades[g].items.forEach(item=>{const modelo=(item[1]||'').trim().toLowerCase();const marca=(item[0]||'').trim().toLowerCase();if(!modelo)return;const key=modelo+'|||'+marca;if(!productMap[key])productMap[key]=[];productMap[key].push({supplierName:s.name,supplierId:s.id,grade:g,item});});}});});
   const compared=Object.entries(productMap).filter(([_,e])=>{const u=new Set(e.map(x=>x.supplierId));return u.size>=2;}).sort((a,b)=>{const bestA=Math.min(...a[1].map(e=>e.item[8]||Infinity));const bestB=Math.min(...b[1].map(e=>e.item[8]||Infinity));return bestA-bestB;});
-  if(!compared.length){el.innerHTML='<div class="empty-state"><div class="icon">◐</div><div class="title">Nenhum produto em comum</div><div class="desc">Os fornecedores não possuem produtos com o mesmo modelo para comparar.</div></div>';return;}
-  el.innerHTML=compared.map(([key,entries])=>{const[modelo,marca]=key.split('|||');const dm=entries[0].item[1]||modelo;const dma=entries[0].item[0]||marca;const sorted=[...entries].sort((a,b)=>(a.item[8]||0)-(b.item[8]||0));const bestPrice=sorted[0].item[8]||0;
-    return`<div class="compare-product-card"><h4>${dma?'🏷️ '+escapeHTML(dma)+' — ':''}${escapeHTML(dm)}</h4><div class="prod-meta">${sorted.length} fornecedor(es) cotaram este produto</div>${sorted.map((entry,idx)=>{const isBest=idx===0&&sorted.length>1;const price=entry.item[8]||0;const qtd=entry.item[7]||0;const diff=isBest?'':'+'+((price-bestPrice)/bestPrice*100).toFixed(0)+'%';
-      return`<div class="compare-forn-row"><span class="forn-name">${escapeHTML(entry.supplierName)}</span><span class="forn-grade" style="background:${entry.grade==='A'?'#ecfdf5':entry.grade==='B'?'#fffbeb':'#fef2f2'};color:${entry.grade==='A'?'#047857':entry.grade==='B'?'#b45309':'#b91c1c'}">Grade ${entry.grade}</span><span class="forn-qtd">Qtd: ${qtd}</span><span class="forn-price">${fmt2(price)}</span>${isBest?'<span class="compare-best-badge">Melhor</span>':''}${!isBest&&diff!==''?`<span style="font-size:10.5px;color:var(--red);font-weight:600">${diff}</span>`:''}</div>`;}).join('')}</div>`;}).join('');
+
+  if(!compared.length){
+    el.innerHTML=`<div class="empty-state"><div class="icon">◐</div><div class="title">Nenhum produto em comum</div><div class="desc">Os ${suppliers.length} fornecedores de <strong>${escapeHTML(cot.tipo)} · ${cot.data}</strong> não compartilham produtos com o mesmo modelo. Verifique se os nomes dos modelos estão padronizados.</div><div style="background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:14px;margin-top:14px;text-align:left"><div style="font-size:11px;color:var(--muted);font-weight:700;margin-bottom:8px">📋 Resumo dos fornecedores:</div>${suppliers.map(s=>{const total=countModelsAll(s);const minP=minPrice(s);return`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line);font-size:12px"><span style="font-weight:600;color:var(--ink)">${escapeHTML(s.name)}</span><span style="color:var(--muted)">${total} modelo(s) · ${minP?fmt(minP):'—'}</span></div>`;}).join('')}</div>`;
+    return;
+  }
+
+  el.innerHTML=compared.map(([key,entries])=>{
+    const[modelo,marca]=key.split('|||');
+    const dm=entries[0].item[1]||modelo;
+    const dma=entries[0].item[0]||marca;
+    const sorted=[...entries].sort((a,b)=>(a.item[8]||0)-(b.item[8]||0));
+    const bestPrice=sorted[0].item[8]||0;
+
+    return`<div class="compare-product-card">
+      <h4>${dma?'🏷️ '+escapeHTML(dma)+' — ':''}${escapeHTML(dm)}</h4>
+      <div class="prod-meta">${sorted.length} fornecedor(es) cotaram este produto</div>
+      ${sorted.map((entry,idx)=>{
+        const isBest=idx===0&&sorted.length>1;
+        const price=entry.item[8]||0;
+        const qtd=entry.item[7]||0;
+        const diff=isBest?'':'+'+((price-bestPrice)/bestPrice*100).toFixed(0)+'%';
+        return`<div class="compare-forn-row">
+          <span class="forn-name">${escapeHTML(entry.supplierName)}</span>
+          <span class="forn-grade" style="background:${entry.grade==='A'?'#ecfdf5':entry.grade==='B'?'#fffbeb':'#fef2f2'};color:${entry.grade==='A'?'#047857':entry.grade==='B'?'#b45309':'#b91c1c'}">Grade ${entry.grade}</span>
+          <span class="forn-qtd">Qtd: ${qtd}</span>
+          <span class="forn-price">${fmt2(price)}</span>
+          ${isBest?'<span class="compare-best-badge">Melhor</span>':''}
+          ${!isBest&&diff!==''?`<span style="font-size:10.5px;color:var(--red);font-weight:600">${diff}</span>`:''}
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
 }
 
 /* ── INSIGHTS ── */
