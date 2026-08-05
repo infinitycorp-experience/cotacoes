@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Cotações · Infinity | Apresentação Diretoria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{
+  --bg:#f8fafc;
+  --card:#ffffff;
+  --ink:#0f172a;
+  --muted:#64748b;
+  --line:#e2e8f0;
+  --brand:#4f46e5;
+  --brand2:#6366f1;
+  --green:#10b981;
+  --amber:#f59e0b;
+  --red:#ef4444;
+  --teal:#2dd4bf;
+  --blue:#38bdf8;
+  --violet:#a78bfa;
+  --grade-a:#34d399;
+  --grade-b:#fbbf24;
+  --grade-c:#f87171;
+  --shadow:0 1px 3px rgba(15,23,42,0.03), 0 10px 30px rgba(15,23,42,0.05);
+  --radius:20px;
+  --glass-bg:rgba(255,255,255,0.45);
+  --glass-border:rgba(255,255,255,0.6);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  background:var(--bg);color:var(--ink);
+  overflow:hidden;-webkit-font-smoothing:antialiased;
+  font-size:12.5px;
+}
+.app{display:grid;grid-template-columns:260px 1fr;grid-template-rows:68px 1fr;height:100vh}
+
+/* ── TOPBAR ── */
+.topbar{
+  grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;background:var(--glass-bg);backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--glass-border);
+  z-index:10;border-radius:0;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-mark{
+  width:42px;height:42px;border-radius:10px;
+  background:linear-gradient(135deg,var(--teal),var(--brand));
+  display:grid;place-items:center;box-shadow:0 4px 14px rgba(79,70,229,.25);
+  position:relative;overflow:hidden;
+}
+.brand-mark::after{
+  content:'';position:absolute;top:0;left:-75%;width:50%;height:100%;
+  background:linear-gradient(120deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.45) 50%,rgba(255,255,255,0) 100%);
+  transform:skewX(-20deg);animation:shineSweep 3.5s ease-in-out infinite;
+}
+@keyframes shineSweep{0%{left:-75%}40%{left:130%}100%{left:130%}}
+.brand-mark svg{width:22px;height:22px}
+.brand-name{font-weight:800;font-size:16px;letter-spacing:-.02em;color:var(--ink)}
+.brand-sub{font-size:10px;color:var(--muted);font-weight:500;letter-spacing:.06em;text-transform:uppercase}
+.top-actions{display:flex;gap:10px;align-items:center}
+.sync-indicator{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-weight:500}
+.sync-dot{width:6px;height:6px;border-radius:50%}
+.sync-dot.online{background:var(--green);box-shadow:0 0 6px var(--green)}
+.sync-dot.offline{background:var(--amber);box-shadow:0 0 6px var(--amber)}
+
+/* ── BOTÕES ── */
+.btn{
+  font-family:'Inter';font-weight:700;font-size:12.5px;
+  padding:8px 15px;border-radius:12px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink);cursor:pointer;
+  display:inline-flex;align-items:center;gap:7px;
+  transition:all .2s ease;
+}
+.btn:hover{border-color:var(--brand);color:var(--brand);transform:translateY(-1px);box-shadow:0 4px 12px rgba(15,23,42,.05)}
+.btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}
+.btn.primary:hover{background:#4338ca;color:#fff}
+.btn.sm{padding:6px 11px;font-size:11.5px;border-radius:10px}
+.btn.ghost{background:transparent}
+.btn-icon-sm{
+  width:28px;height:28px;padding:0;display:inline-grid;place-items:center;
+  border-radius:8px;border:1px solid var(--line);background:var(--card);
+  color:var(--muted);cursor:pointer;transition:all .2s ease;font-size:12px;
+}
+.btn-icon-sm:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+.btn-icon-sm.del:hover{background:var(--red);border-color:var(--red)}
+.btn-cotacao{border-color:rgba(79,70,229,.25);color:var(--brand)}
+.btn-cotacao:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+.btn-export{border-color:rgba(16,185,129,.25);color:var(--green)}
+.btn-export:hover{background:var(--green);color:#fff;border-color:var(--green)}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  background:#fff;border-right:1px solid var(--line);
+  padding:16px 14px;overflow-y:auto;
+  display:flex;flex-direction:column;
+}
+.nav-item{
+  display:flex;align-items:center;gap:11px;padding:10px 14px;border-radius:12px;
+  cursor:pointer;transition:all .2s ease;margin-bottom:2px;
+  color:var(--muted);border:1px solid transparent;
+}
+.nav-item:hover{background:#f1f5f9;color:var(--ink)}
+.nav-item.active{
+  background:linear-gradient(135deg,var(--brand),var(--brand2));
+  color:#fff;box-shadow:0 4px 14px rgba(79,70,229,.3);transform:translateY(-1px);
+}
+.nav-item .ico{width:30px;height:30px;border-radius:8px;background:#f1f5f9;display:grid;place-items:center;flex-shrink:0;font-size:14px}
+.nav-item.active .ico{background:rgba(255,255,255,.2)}
+.nav-item .label{font-size:13px;font-weight:600}
+.nav-item .meta{font-size:9.5px;color:var(--muted);margin-top:1px}
+.nav-item.active .meta{color:rgba(255,255,255,.7)}
+.nav-divider{height:1px;background:var(--line);margin:8px 0}
+
+.sidebar-bottom{
+  margin-top:auto;padding-top:10px;
+  border-top:1px solid var(--line);
+  display:flex;flex-direction:column;gap:4px;
+}
+.sidebar-util-btn{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 14px;border-radius:10px;cursor:pointer;
+  transition:all .2s ease;color:var(--muted);
+  background:transparent;border:1px solid transparent;
+  font-size:12px;font-family:'Inter';font-weight:600;
+}
+.sidebar-util-btn:hover{background:#f1f5f9;color:var(--ink)}
+.sidebar-util-btn.config:hover{color:var(--amber)}
+.sidebar-util-btn.sync:hover{color:var(--brand)}
+.sidebar-util-btn .util-ico{font-size:14px;width:26px;height:26px;border-radius:7px;background:#f1f5f9;display:grid;place-items:center;flex-shrink:0}
+
+/* ── MAIN ── */
+.main{overflow-y:auto;padding:28px;position:relative}
+.view{display:none;animation:fadeUp .4s ease}
+.view.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+.view-head{margin-bottom:24px;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px}
+.view-head-left h1{font-weight:800;font-size:26px;letter-spacing:-.03em;color:var(--ink)}
+.view-head-left p{color:var(--muted);margin-top:4px;font-size:13px;font-weight:500}
+.view-head-right{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ── CONTEXTO ── */
+.context-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 14px;background:#f1f5f9;border:1px solid var(--line);
+  border-radius:20px;font-size:11.5px;color:var(--brand);margin-bottom:14px;font-weight:700;
+}
+.context-badge .ctx-dot{width:6px;height:6px;border-radius:50%;background:var(--brand)}
+
+/* ── KPIs ── */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.kpi{
+  background:var(--card);border-radius:var(--radius);padding:16px 16px 20px;
+  box-shadow:var(--shadow);position:relative;overflow:hidden;
+  border:1px solid rgba(226,232,240,.7);border-left:5px solid var(--brand);
+  transition:transform .3s cubic-bezier(.16,1,.3,1),box-shadow .3s ease;
+}
+.kpi:hover{transform:translateY(-3px);box-shadow:0 20px 40px rgba(15,23,42,.07)}
+.kpis .kpi:nth-child(1){border-left-color:var(--green)}
+.kpis .kpi:nth-child(2){border-left-color:var(--amber)}
+.kpis .kpi:nth-child(3){border-left-color:var(--brand)}
+.kpis .kpi:nth-child(4){border-left-color:var(--teal)}
+.kpis .kpi:nth-child(1) .val{color:var(--green)}
+.kpis .kpi:nth-child(2) .val{color:var(--amber)}
+.kpis .kpi:nth-child(3) .val{color:var(--brand)}
+.kpis .kpi:nth-child(4) .val{color:var(--teal)}
+.kpi .kpi-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.kpi .value{font-weight:900;font-size:28px;letter-spacing:-.03em;margin-top:2px}
+.kpi .delta{font-size:11px;margin-top:6px;color:var(--green);display:inline-flex;align-items:center;gap:4px;font-weight:600}
+
+/* ── MINHAS COTAÇÕES ── */
+.cotacoes-list-header{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px;
+}
+.cotacoes-list-header h2{font-weight:800;font-size:22px;letter-spacing:-.03em;color:var(--ink)}
+.cotacoes-cards-full{display:flex;flex-direction:column;gap:10px}
+
+.cotacao-row-card{
+  display:flex;align-items:center;gap:14px;
+  background:var(--card);border:1px solid var(--line);
+  border-radius:16px;padding:16px 18px;cursor:pointer;
+  transition:all .3s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden;
+  box-shadow:0 1px 2px rgba(15,23,42,.02);
+}
+.cotacao-row-card:hover{border-color:var(--brand);transform:translateY(-2px);box-shadow:0 12px 32px rgba(15,23,42,.06)}
+.cotacao-row-card::before{
+  content:'';position:absolute;top:0;left:0;width:3px;height:100%;border-radius:16px 0 0 16px;
+}
+.cotacao-row-card.tipo-notebooks::before{background:linear-gradient(180deg,var(--teal),var(--blue))}
+.cotacao-row-card.tipo-telas::before{background:linear-gradient(180deg,var(--violet),var(--blue))}
+.cotacao-row-card.tipo-projetores::before{background:linear-gradient(180deg,var(--amber),var(--red))}
+.cotacao-row-card.tipo-outros::before{background:linear-gradient(180deg,var(--muted),#cbd5e1)}
+.cotacao-row-icon{
+  width:44px;height:44px;border-radius:10px;background:#f1f5f9;
+  display:grid;place-items:center;font-size:20px;flex-shrink:0;
+}
+.cotacao-row-info{flex:1;min-width:0}
+.cotacao-row-info h3{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cotacao-row-info .cotacao-desc{font-size:11.5px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:400px}
+.cotacao-row-meta{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.cotacao-row-meta .forn-count{font-size:11.5px;color:var(--muted);white-space:nowrap;font-weight:500}
+.cotacao-row-meta .cotacao-date-tag{
+  font-size:10.5px;padding:3px 9px;border-radius:20px;
+  background:#eff6ff;color:var(--brand);border:1px solid #bfdbfe;white-space:nowrap;font-weight:700;
+}
+.cotacao-row-actions{display:flex;gap:5px;flex-shrink:0;margin-left:4px}
+
+/* ── STATUS / TIPO BADGES ── */
+.status-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;
+  white-space:nowrap;letter-spacing:.04em;text-transform:uppercase;
+}
+.status-em_andamento{background:#fffbeb;color:#b45309;border:1px solid #fde68a}
+.status-concluida{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
+.status-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.status-em_andamento .status-dot{background:var(--amber)}
+.status-concluida .status-dot{background:var(--green)}
+.tipo-badge-sm{
+  font-size:10px;font-weight:700;padding:3px 7px;border-radius:5px;
+  background:#f5f3ff;color:#5b21b6;border:1px solid #ddd6fe;white-space:nowrap;
+}
+
+/* ── COTACAO CARDS (dashboard) ── */
+.cotacao-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:24px}
+.cotacao-card{
+  background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:18px;cursor:pointer;transition:all .3s cubic-bezier(.16,1,.3,1);
+  position:relative;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,.02);
+}
+.cotacao-card:hover{transform:translateY(-3px);border-color:var(--brand);box-shadow:0 12px 32px rgba(15,23,42,.06)}
+.cotacao-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.cotacao-card.tipo-notebooks::before{background:linear-gradient(90deg,var(--teal),var(--blue))}
+.cotacao-card.tipo-telas::before{background:linear-gradient(90deg,var(--violet),var(--blue))}
+.cotacao-card.tipo-projetores::before{background:linear-gradient(90deg,var(--amber),var(--red))}
+.cotacao-card.tipo-outros::before{background:linear-gradient(90deg,var(--muted),#cbd5e1)}
+.cotacao-card .cotacao-tipo{font-size:13.5px;font-weight:700;margin-bottom:2px;color:var(--ink)}
+.cotacao-card .cotacao-data{font-size:10.5px;color:var(--muted);margin-bottom:10px;font-weight:500}
+.cotacao-card .cotacao-stats{display:flex;gap:16px;font-size:11.5px;color:var(--muted)}
+.cotacao-card .cotacao-stats span{display:flex;flex-direction:column}
+.cotacao-card .cotacao-stats strong{font-size:16px;color:var(--ink);font-weight:800}
+
+/* ── SUPPLIER CARDS ── */
+.suppliers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.supplier-card{
+  background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:18px;cursor:pointer;transition:all .3s cubic-bezier(.16,1,.3,1);
+  position:relative;overflow:visible;box-shadow:0 1px 2px rgba(15,23,42,.02);
+}
+.supplier-card:hover{transform:translateY(-3px);border-color:var(--brand);box-shadow:0 12px 32px rgba(15,23,42,.06)}
+.supplier-card.not-working{border-color:rgba(239,68,68,.2);background:#fff5f5}
+.card-logo-wrap{
+  position:absolute;top:14px;right:14px;z-index:3;
+  width:48px;height:48px;border-radius:10px;
+  background:#f8fafc;border:1px solid var(--line);
+  display:grid;place-items:center;padding:6px;
+}
+.card-logo-wrap img{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px}
+.card-logo-placeholder{font-weight:800;font-size:14px;color:var(--brand);text-transform:uppercase}
+.card-content{padding-right:58px}
+.supplier-name{font-weight:700;font-size:15px;margin-bottom:2px;color:var(--ink)}
+.supplier-status{font-size:11px;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;font-weight:500}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)}
+.dot.pending{background:var(--amber);box-shadow:0 0 6px var(--amber)}
+.dot.off{background:var(--red);box-shadow:0 0 6px var(--red)}
+.supplier-stats{display:flex;gap:12px;font-size:11px;color:var(--muted);flex-wrap:wrap}
+.supplier-stats span{display:flex;flex-direction:column}
+.supplier-stats strong{font-size:14px;color:var(--ink);font-weight:800}
+
+.card-obs-preview{
+  font-size:11px;color:var(--muted);line-height:1.5;
+  background:#f8fafc;border:1px solid var(--line);border-radius:8px;
+  padding:8px 10px;margin-top:8px;max-height:50px;overflow:hidden;position:relative;
+}
+.card-obs-tooltip{
+  position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);
+  background:#fff;border:1px solid var(--line);border-radius:10px;
+  padding:8px 12px;font-size:11px;color:var(--ink);line-height:1.5;
+  max-width:280px;z-index:20;pointer-events:none;opacity:0;
+  transition:opacity .2s ease;box-shadow:0 12px 32px rgba(0,0,0,.12);
+}
+.card-obs-preview:hover .card-obs-tooltip{opacity:1}
+.card-actions{
+  position:absolute;bottom:12px;right:12px;z-index:3;
+  display:flex;gap:5px;opacity:0;transition:opacity .2s ease;
+}
+.supplier-card:hover .card-actions{opacity:1}
+.card-action-btn{
+  width:30px;height:30px;border-radius:8px;border:1px solid var(--line);
+  background:#fff;color:var(--muted);cursor:pointer;
+  display:grid;place-items:center;transition:all .2s ease;font-size:11px;
+}
+.card-action-btn:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+.card-action-btn.del:hover{background:var(--red);border-color:var(--red)}
+
+/* ── ANEXOS NO CARD ── */
+.card-attach-area{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
+.card-attach-toggle{
+  display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;
+  color:var(--muted);cursor:pointer;padding:4px 8px;border-radius:6px;
+  background:transparent;border:1px dashed transparent;transition:all .2s;font-family:'Inter';
+}
+.card-attach-toggle:hover{color:var(--brand);border-color:var(--brand);background:#f0f9ff}
+.card-attach-toggle.has-files{color:var(--brand);border-color:rgba(79,70,229,.3);background:#eff6ff;border-style:solid}
+.card-attach-list{display:none;margin-top:6px}
+.card-attach-list.open{display:block}
+.card-attach-row{
+  display:flex;align-items:center;gap:8px;padding:5px 8px;
+  background:#f8fafc;border:1px solid var(--line);border-radius:6px;
+  margin-bottom:3px;font-size:11px;transition:all .15s;
+}
+.card-attach-row:hover{background:#f1f5f9;border-color:#cbd5e1}
+.card-attach-row .att-icon{font-size:13px;flex-shrink:0}
+.card-attach-row .att-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink);font-weight:500}
+.card-attach-row .att-size{font-size:10px;color:var(--muted);flex-shrink:0}
+.card-attach-row .att-actions{display:flex;gap:4px;flex-shrink:0}
+.card-attach-row .att-btn{
+  width:22px;height:22px;border-radius:5px;border:1px solid var(--line);
+  background:#fff;color:var(--muted);cursor:pointer;display:grid;place-items:center;
+  font-size:10px;transition:all .15s;padding:0;
+}
+.card-attach-row .att-btn:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+.card-attach-row .att-btn.del:hover{background:var(--red);border-color:var(--red)}
+.card-attach-add{
+  display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:600;
+  color:var(--muted);cursor:pointer;padding:3px 8px;border-radius:5px;
+  background:transparent;border:1px dashed var(--line);transition:all .15s;margin-top:4px;font-family:'Inter';
+}
+.card-attach-add:hover{border-color:var(--brand);color:var(--brand)}
+
+/* ── ANEXOS NA TABELA ALL ITEMS ── */
+.attach-cell{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.attach-chip{
+  display:inline-flex;align-items:center;gap:3px;background:#f1f5f9;padding:2px 7px;
+  border-radius:5px;font-size:10.5px;color:var(--ink);cursor:pointer;transition:all .2s ease;
+  max-width:110px;border:1px solid var(--line);
+}
+.attach-chip:hover{background:#e2e8f0}
+.attach-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.attach-chip .ext{font-weight:700;font-size:9px;text-transform:uppercase;padding:1px 4px;border-radius:3px;flex-shrink:0}
+.attach-chip .ext.pdf{background:#fee2e2;color:#b91c1c}
+.attach-chip .ext.xlsx{background:#dcfce7;color:#047857}
+
+/* ── DETAIL MODAL ── */
+.detail-modal{
+  position:fixed;inset:0;background:rgba(15,23,42,.35);backdrop-filter:blur(6px);
+  z-index:200;display:none;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .3s ease;
+}
+.detail-modal.show{display:flex;opacity:1}
+.detail-box{
+  background:#fff;border:1px solid var(--line);border-radius:20px;
+  width:min(880px,92vw);max-height:85vh;overflow-y:auto;
+  box-shadow:0 20px 50px rgba(0,0,0,.12);
+  transform:scale(.95);transition:transform .3s ease;display:flex;flex-direction:column;
+}
+.detail-modal.show .detail-box{transform:scale(1)}
+.detail-head-modal{
+  padding:22px 26px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:18px;background:#f8fafc;
+  border-radius:20px 20px 0 0;position:sticky;top:0;z-index:2;
+}
+.detail-logo{
+  width:60px;height:60px;background:#fff;border-radius:12px;
+  display:grid;place-items:center;padding:8px;border:1px solid var(--line);flex-shrink:0;
+}
+.detail-logo img{max-height:100%;max-width:100%;object-fit:contain}
+.detail-logo-placeholder{font-weight:800;font-size:18px;color:var(--brand)}
+.detail-title{font-weight:800;font-size:20px;letter-spacing:-.02em}
+.detail-sub{font-size:11.5px;color:var(--muted);margin-top:2px;font-weight:500}
+.detail-close-btn{
+  width:32px;height:32px;border-radius:8px;background:#fff;
+  border:1px solid var(--line);color:var(--ink);cursor:pointer;
+  display:grid;place-items:center;transition:all .2s ease;font-size:13px;margin-left:auto;flex-shrink:0;
+}
+.detail-close-btn:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.detail-body-modal{padding:22px 26px 28px}
+.detail-section{margin-bottom:20px}
+.detail-section h3{font-weight:800;font-size:13px;margin-bottom:12px;color:var(--ink);display:flex;align-items:center;gap:8px}
+.detail-section h3::before{content:'';width:3px;height:14px;border-radius:2px}
+.detail-section h3.sec-a::before{background:var(--grade-a)}
+.detail-section h3.sec-b::before{background:var(--grade-b)}
+.detail-section h3.sec-c::before{background:var(--grade-c)}
+.detail-section h3.sec-info::before{background:var(--brand)}
+.info-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+.info-item{background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:12px}
+.info-item .k{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px}
+.info-item .v{font-size:13px;font-weight:600}
+.info-item .v.big{font-size:18px;font-weight:800;color:var(--brand)}
+.info-item .v.notice{color:var(--red);font-weight:700;font-size:12px}
+
+.grade-tag{position:relative;cursor:help}
+.grade-tag.a{color:var(--grade-a)}.grade-tag.b{color:var(--grade-b)}.grade-tag.c{color:var(--grade-c)}
+
+/* ── TABLES ── */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;padding:10px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--line);background:#f8fafc}
+.tbl td{padding:9px 12px;border-bottom:1px solid var(--line);color:var(--muted)}
+.tbl tr:hover td{background:#f8fafc}
+.tbl td:first-child{color:var(--ink);font-weight:600}
+.tbl .price{font-weight:600;color:var(--ink)}
+.tbl .total{font-weight:700;color:var(--brand)}
+.tbl tfoot td{border-top:2px solid var(--line);font-weight:700;color:var(--ink)}
+
+.filters-bar{
+  display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px;
+  padding:14px;background:#fff;border:1px solid var(--line);border-radius:14px;align-items:center;
+}
+.filters-bar input,.filters-bar select{
+  padding:8px 10px;background:#f8fafc;border:1px solid var(--line);
+  border-radius:10px;color:var(--ink);font-family:'Inter';font-size:12px;transition:all .15s;
+}
+.filters-bar input::placeholder{color:var(--muted)}
+.filters-bar select{min-width:150px}
+.filters-bar input:focus,.filters-bar select:focus{outline:0;border-color:var(--brand);background:#fff;box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+.sortable-th{cursor:pointer;user-select:none;transition:color .2s}
+.sortable-th:hover{color:var(--brand)}
+.sortable-th .sort-arrow{font-size:10px;margin-left:3px;opacity:.5}
+.sortable-th.active .sort-arrow{opacity:1;color:var(--brand)}
+
+/* ── COMPARATIVO ── */
+.compare-product-card{
+  background:#fff;border:1px solid var(--line);border-radius:14px;
+  padding:18px;margin-bottom:14px;box-shadow:0 1px 2px rgba(15,23,42,.02);
+}
+.compare-product-card h4{font-weight:800;font-size:14px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.compare-product-card .prod-meta{font-size:11px;color:var(--muted);margin-bottom:14px;font-weight:500}
+.compare-forn-row{
+  display:flex;align-items:center;gap:12px;padding:9px 12px;
+  background:#f8fafc;border-radius:8px;margin-bottom:5px;font-size:12px;transition:background .2s;
+}
+.compare-forn-row:hover{background:#f1f5f9}
+.compare-forn-row .forn-name{flex:1;font-weight:600;color:var(--ink)}
+.compare-forn-row .forn-grade{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:4px;color:var(--muted)}
+.compare-forn-row .forn-price{font-weight:700;font-size:13px;color:var(--brand)}
+.compare-forn-row .forn-qtd{font-size:10.5px;color:var(--muted)}
+.compare-best-badge{
+  font-size:9px;font-weight:800;text-transform:uppercase;
+  padding:2px 7px;border-radius:4px;
+  background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;
+}
+
+/* ── INSIGHTS ── */
+.insights-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.insight{
+  background:#fff;border:1px solid var(--line);border-radius:14px;
+  padding:18px;display:flex;gap:12px;box-shadow:0 1px 2px rgba(15,23,42,.02);
+}
+.insight .ic{width:38px;height:38px;border-radius:10px;background:#f8fafc;display:grid;place-items:center;flex-shrink:0;font-size:16px}
+.insight h5{font-size:13px;font-weight:700;margin-bottom:3px;color:var(--ink)}
+.insight p{font-size:12px;color:var(--muted);line-height:1.5}
+.period-comparison{
+  background:#fff;border:1px solid var(--line);border-radius:14px;
+  padding:18px;margin-bottom:14px;
+}
+.period-comparison h4{font-weight:800;font-size:13px;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.period-row{
+  display:flex;align-items:center;gap:10px;padding:8px 12px;
+  background:#f8fafc;border-radius:8px;margin-bottom:4px;font-size:11.5px;
+}
+.period-row .period-date{font-weight:600;color:var(--ink);min-width:80px}
+.period-row .period-price{font-weight:700;color:var(--brand)}
+.period-row .period-delta{font-size:11px;font-weight:700}
+.period-row .period-delta.up{color:var(--red)}
+.period-row .period-delta.down{color:var(--green)}
+
+/* ── MODAL ── */
+.modal{
+  position:fixed;inset:0;background:rgba(15,23,42,.35);backdrop-filter:blur(6px);
+  z-index:200;display:none;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .3s ease;
+}
+.modal.show{display:flex;opacity:1}
+.modal-box{
+  background:#fff;border:1px solid var(--line);border-radius:18px;
+  padding:28px;width:min(860px,94vw);max-height:88vh;overflow-y:auto;
+  box-shadow:0 20px 50px rgba(0,0,0,.12);transform:scale(.95);transition:transform .3s ease;
+}
+.modal.show .modal-box{transform:scale(1)}
+.modal-box h2{font-weight:800;font-size:20px;margin-bottom:4px;letter-spacing:-.02em}
+.modal-box .sub{font-size:12.5px;color:var(--muted);margin-bottom:20px;font-weight:500}
+.field{margin-bottom:14px}
+.field label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px;display:block}
+.field input,.field select,.field textarea{
+  width:100%;padding:10px 12px;background:#f8fafc;border:1px solid var(--line);
+  border-radius:10px;color:var(--ink);font-family:'Inter';font-size:12.5px;transition:all .15s;
+}
+.field input:focus,.field select:focus,.field textarea:focus{outline:0;border-color:var(--brand);background:#fff;box-shadow:0 0 0 3px rgba(79,70,229,.1)}
+.field-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.field-row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+
+.checkbox-field{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 14px;background:#fff5f5;border:1px solid #fecaca;border-radius:10px;
+  margin-bottom:14px;transition:all .2s ease;
+}
+.checkbox-field label{font-size:12.5px;font-weight:600;cursor:pointer;color:var(--ink);margin:0;letter-spacing:0;text-transform:none}
+.checkbox-field .hint{font-size:10px;color:var(--muted)}
+.checkbox-field input[type=checkbox]{width:16px;height:16px;accent-color:var(--red);cursor:pointer}
+
+.logo-upload-area{
+  display:flex;align-items:center;gap:14px;padding:12px;
+  border:1px dashed var(--line);border-radius:12px;background:#f8fafc;cursor:pointer;transition:all .2s;
+}
+.logo-upload-area:hover{border-color:var(--brand);background:#fff}
+.logo-upload-preview{width:56px;height:56px;border-radius:10px;background:#fff;display:grid;place-items:center;flex-shrink:0;overflow:hidden}
+.logo-upload-preview img{max-width:100%;max-height:100%;object-fit:contain}
+.logo-upload-info{font-size:11.5px;color:var(--muted)}
+.logo-upload-info strong{color:var(--brand)}
+.logo-upload-input{display:none}
+
+.grade-tabs{display:flex;gap:3px;margin-bottom:0}
+.grade-tab{
+  padding:9px 18px;border-radius:10px 10px 0 0;border:1px solid transparent;
+  background:#f1f5f9;color:var(--muted);cursor:pointer;
+  font-size:11.5px;font-weight:700;font-family:'Inter';transition:all .2s;
+}
+.grade-tab.active-a{background:#ecfdf5;color:#047857;border-color:#a7f3d0}
+.grade-tab.active-b{background:#fffbeb;color:#b45309;border-color:#fde68a}
+.grade-tab.active-c{background:#fef2f2;color:#b91c1c;border-color:#fecaca}
+.grade-tab:hover:not(.active-a):not(.active-b):not(.active-c){color:var(--ink)}
+.grade-panel-edit{display:none;background:#fff;border:1px solid var(--line);border-radius:0 10px 10px 10px;padding:16px}
+.grade-panel-edit.active{display:block}
+.grades-disabled-overlay{
+  display:none;padding:20px;text-align:center;color:var(--muted);font-size:12.5px;
+  background:#f8fafc;border:1px solid var(--line);border-radius:10px;
+}
+.grades-disabled-overlay.visible{display:block}
+
+.edit-tbl{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:6px}
+.edit-tbl th{text-align:left;padding:5px 4px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--line);white-space:nowrap}
+.edit-tbl td{padding:3px 3px;vertical-align:middle}
+.edit-tbl input{width:100%;padding:6px 6px;background:#f8fafc;border:1px solid var(--line);border-radius:7px;color:var(--ink);font-family:'Inter';font-size:11px;transition:border-color .2s}
+.edit-tbl input:focus{outline:0;border-color:var(--brand);box-shadow:0 0 0 2px rgba(79,70,229,.1)}
+.edit-tbl .col-marca input{min-width:55px}
+.edit-tbl .col-modelo input{min-width:80px}
+.edit-tbl .col-proc input{min-width:70px}
+.edit-tbl .col-ger input{min-width:38px}
+.edit-tbl .col-mem input{min-width:40px}
+.edit-tbl .col-ssd input{min-width:40px}
+.edit-tbl .col-tela input{min-width:40px}
+.edit-tbl .col-qtd input{width:40px;text-align:center}
+.edit-tbl .col-valor input{width:65px;text-align:right}
+.edit-tbl .col-total{font-weight:600;font-size:11.5px;text-align:right;padding-right:5px;color:var(--brand);white-space:nowrap}
+.edit-tbl .col-action{text-align:center;width:24px}
+.row-del-btn{
+  width:22px;height:22px;border-radius:5px;border:1px solid var(--line);
+  background:#fff;color:var(--muted);cursor:pointer;
+  display:inline-grid;place-items:center;transition:all .2s;font-size:9px;
+}
+.row-del-btn:hover{background:var(--red);color:#fff;border-color:var(--red)}
+.add-row-btn{
+  font-size:11px;padding:6px 11px;border-radius:6px;border:1px dashed var(--line);
+  background:transparent;color:var(--muted);cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;transition:all .2s;font-weight:600;
+}
+.add-row-btn:hover{border-color:var(--brand);color:var(--brand)}
+
+/* ── TOAST ── */
+.toast{
+  position:fixed;bottom:28px;right:28px;z-index:300;
+  background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;
+  font-size:12.5px;font-weight:700;box-shadow:0 12px 30px rgba(0,0,0,.15);
+  display:flex;align-items:center;gap:8px;
+  transform:translateY(20px);opacity:0;transition:.3s;
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{background:#047857}
+.toast.error{background:#b91c1c}
+
+.empty-state{
+  background:#fff;border:1px dashed var(--line);border-radius:16px;
+  padding:36px;text-align:center;color:var(--muted);
+}
+.empty-state .icon{font-size:36px;margin-bottom:10px}
+.empty-state .title{font-weight:800;font-size:17px;margin-bottom:5px;color:var(--ink)}
+.empty-state .desc{font-size:12.5px}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:#94a3b8}
+
+/* ── TOOLTIPS DAS GRADES ── */
+.grade-tag{position:relative;cursor:help;font-weight:700;font-size:10px;padding:3px 8px;border-radius:5px;white-space:nowrap}
+.grade-tag.a{background:#ecfdf5;color:#047857;border:1px solid #a7f3d0}
+.grade-tag.b{background:#fffbeb;color:#b45309;border:1px solid #fde68a}
+.grade-tag.c{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
+.grade-tag::after{
+  content:attr(data-tooltip);
+  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(4px);
+  background:var(--ink);color:#fff;font-size:11px;font-weight:500;
+  padding:8px 12px;border-radius:8px;white-space:nowrap;
+  opacity:0;pointer-events:none;transition:all .2s ease;z-index:50;
+  box-shadow:0 8px 24px rgba(0,0,0,.15);
+  letter-spacing:0;text-transform:none;
+}
+.grade-tag::before{
+  content:'';position:absolute;bottom:calc(100% + 2px);left:50%;transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:var(--ink);
+  opacity:0;pointer-events:none;transition:all .2s ease;z-index:50;
+}
+.grade-tag:hover::after{opacity:1;transform:translateX(-50%) translateY(0)}
+.grade-tag:hover::before{opacity:1}
+
+/* ── PREVIEW MODAL ── */
+.preview-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:999;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.preview-overlay.active{opacity:1;pointer-events:all}
+.preview-box{background:#fff;border-radius:16px;width:min(95vw,1000px);height:min(90vh,700px);display:flex;flex-direction:column;box-shadow:0 25px 60px rgba(0,0,0,.2);overflow:hidden;animation:modalIn .3s cubic-bezier(.16,1,.3,1)}
+@keyframes modalIn{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+.preview-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #e2e8f0}
+.preview-title{font-weight:700;font-size:14px;color:var(--ink);display:flex;align-items:center;gap:8px}
+.preview-actions{display:flex;gap:6px}
+.preview-actions button{padding:6px 12px;border-radius:8px;border:1px solid #e2e8f0;background:#fff;font-size:12px;font-weight:600;cursor:pointer;color:#64748b;transition:all .2s ease;font-family:'Inter'}
+.preview-actions button:hover{background:#f8fafc;color:var(--ink)}
+.preview-actions button.primary{background:var(--brand);color:#fff;border-color:transparent}
+.preview-actions button.primary:hover{filter:brightness(1.1)}
+.preview-body{flex:1;overflow:auto;padding:0}
+.preview-body iframe{width:100%;height:100%;border:none}
+.preview-body .xlsx-table-wrap{padding:20px;overflow:auto}
+.preview-body .xlsx-table-wrap table{width:max-content;min-width:100%;border-collapse:collapse;font-size:12px}
+.preview-body .xlsx-table-wrap td,.preview-body .xlsx-table-wrap th{padding:6px 12px;border:1px solid #e2e8f0;white-space:nowrap}
+.preview-body .xlsx-table-wrap th{background:#f8fafc;font-weight:700;position:sticky;top:0;z-index:1}
+.preview-body .xlsx-table-wrap tr:nth-child(even){background:#f8fafc}
+
+
+@media(max-width:900px){
+  .app{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .field-row{grid-template-columns:1fr}
+  .card-content{padding-right:56px}
+  .detail-box{width:96vw;max-height:90vh}
+  .cotacao-row-actions{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-name">Cotações · Infinity</div>
+        <div class="brand-sub">Apresentação Diretoria</div>
+      </div>
+    </div>
+    <div class="top-actions">
+      <div class="sync-indicator">
+        <div class="sync-dot" id="syncDot"></div>
+        <span id="syncLabel">Não configurado</span>
+      </div>
+      <button class="btn cotacao-btn sm" onclick="openCotacaoModal()">📋 Nova Cotação</button>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="nav-item active" data-view="dashboard">
+      <div class="ico">◈</div>
+      <div><div class="label">Dashboard</div><div class="meta">Visão geral</div></div>
+    </div>
+    <div class="nav-item" data-view="cotacoes">
+      <div class="ico">📋</div>
+      <div><div class="label">Minhas Cotações</div><div class="meta" id="nav-cotacoes-count">0 cotações</div></div>
+    </div>
+    <div class="nav-divider"></div>
+    <div class="nav-item" data-view="allitems">
+      <div class="ico">☰</div>
+      <div><div class="label">Todos os Itens</div><div class="meta" id="nav-items-count">0 equipamentos</div></div>
+    </div>
+    <div class="nav-item" data-view="compare">
+      <div class="ico">◐</div>
+      <div><div class="label">Comparativo</div><div class="meta">Produto × Fornecedor</div></div>
+    </div>
+    <div class="nav-item" data-view="insights">
+      <div class="ico">✦</div>
+      <div><div class="label">Insights</div><div class="meta">Análises & Períodos</div></div>
+    </div>
+    <div class="sidebar-bottom">
+      <button class="sidebar-util-btn config" onclick="openConfigModal()"><div class="util-ico">⚙</div> Config</button>
+      <button class="sidebar-util-btn sync" onclick="syncFromGitHub()"><div class="util-ico">↻</div> Sincronizar</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <section class="view active" id="view-dashboard">
+      <div class="view-head"><div class="view-head-left"><h1>Dashboard Executivo</h1><p>Resumo consolidado de todas as cotações</p></div></div>
+      <div class="kpis" id="dashboard-kpis"></div>
+      <div style="margin-bottom:18px;display:flex;justify-content:space-between;align-items:center"><span style="font-weight:700;font-size:14px;color:var(--ink)">Cotações por Tipo</span><span style="font-size:11px;color:var(--muted);font-weight:500">Clique para ver os fornecedores</span></div>
+      <div class="cotacao-cards-grid" id="dashboard-cotacoes-cards"></div>
+      <div style="margin-bottom:14px"><span style="font-weight:700;font-size:14px;color:var(--ink)">Últimos Fornecedores</span></div>
+      <div class="suppliers-grid" id="dashboard-recent-suppliers"></div>
+    </section>
+
+    <!-- MINHAS COTAÇÕES -->
+    <section class="view" id="view-cotacoes">
+      <div class="cotacoes-list-header"><h2>📋 Minhas Cotações</h2><button class="btn primary" onclick="openCotacaoModal()">＋ Nova Cotação</button></div>
+      <div class="cotacoes-cards-full" id="cotacoes-full-list"></div>
+      <div class="empty-state" id="cotacoes-empty" style="display:none"><div class="icon">📋</div><div class="title">Nenhuma cotação criada</div><div class="desc">Clique em <strong>"Nova Cotação"</strong> para criar sua primeira cotação.</div><button class="btn primary" style="margin-top:14px" onclick="openCotacaoModal()">Criar Primeira Cotação</button></div>
+    </section>
+
+    <!-- COTACAO VIEW -->
+    <section class="view" id="view-cotacao">
+      <div class="view-head">
+        <div class="view-head-left"><div class="context-badge"><span class="ctx-dot"></span><span id="cotacao-context-label"></span></div><h1 id="cotacao-view-title">Fornecedores</h1><p id="cotacao-view-sub"></p><div id="cotacao-view-status-badge" style="margin-top:6px"></div></div>
+        <div class="view-head-right"><button class="btn sm" onclick="voltarParaCotacoes()">← Voltar</button><button class="btn sm cotacao-btn" onclick="editarCotacaoAtiva()">✎ Editar Cotação</button><button class="btn sm btn-export" onclick="exportAllItemsXlsx()">📥 Exportar .XLSX</button><button class="btn primary sm" onclick="openAddModal()">＋ Novo Fornecedor</button></div>
+      </div>
+      <div class="suppliers-grid" id="cotacao-suppliers"></div>
+    </section>
+
+    <!-- ALL ITEMS -->
+    <section class="view" id="view-allitems">
+      <div class="view-head"><div class="view-head-left"><h1>Todos os Equipamentos</h1><p>Relação completa de todas as cotações</p></div><button class="btn sm btn-export" onclick="exportAllItemsXlsx()">📥 Exportar .XLSX</button></div>
+      <div class="filters-bar">
+        <select id="filter-cotacao" onchange="renderAllItems()"><option value="all">Todas as cotações</option></select>
+        <select id="filter-supplier" onchange="renderAllItems()"><option value="all">Todos os fornecedores</option></select>
+        <select id="filter-grade" onchange="renderAllItems()"><option value="all">Todas as grades</option><option value="A">Grade A</option><option value="B">Grade B</option><option value="C">Grade C</option></select>
+        <input type="text" id="filter-search" placeholder="Buscar por marca, modelo, processador..." oninput="renderAllItems()" style="flex:1;min-width:180px"/>
+        <span style="font-size:11px;color:var(--muted);font-weight:600" id="all-items-count"></span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="tbl" id="all-items-table" style="min-width:1250px">
+          <thead><tr><th>Cotação</th><th>Fornecedor</th><th>Grade</th><th>Marca</th><th>Modelo</th><th class="sortable-th" onclick="sortAllItems('proc')">Proc. <span class="sort-arrow">⇅</span></th><th class="sortable-th" onclick="sortAllItems('ger')">Ger. <span class="sort-arrow">⇅</span></th><th class="sortable-th" onclick="sortAllItems('mem')">Mem. <span class="sort-arrow">⇅</span></th><th class="sortable-th" onclick="sortAllItems('ssd')">SSD <span class="sort-arrow">⇅</span></th><th class="sortable-th" onclick="sortAllItems('tela')">Tela <span class="sort-arrow">⇅</span></th><th class="sortable-th" onclick="sortAllItems('qtd')">Qtd <span class="sort-arrow">⇅</span></th><th class="sortable-th" onclick="sortAllItems('valor')">Vlr Unit. <span class="sort-arrow">⇅</span></th><th>Total</th><th style="width:100px">Anexos</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- COMPARATIVO -->
+    <section class="view" id="view-compare">
+      <div class="view-head"><div class="view-head-left"><h1>Comparativo por Produto</h1><p>Mesmo produto entre fornecedores da cotação ativa</p></div></div>
+      <div id="compare-content"></div>
+    </section>
+
+    <!-- INSIGHTS -->
+    <section class="view" id="view-insights">
+      <div class="view-head"><div class="view-head-left"><h1>Insights & Recomendações</h1><p>Análises com comparativo entre períodos</p></div></div>
+      <div class="insights-grid" id="insights-content"></div>
+    </section>
+  </main>
+</div>
+
+<!-- COTACAO MODAL -->
+<div class="modal" id="cotacaoModal"><div class="modal-box" style="width:min(520px,94vw)"><h2 id="cotacaoModalTitle">Nova Cotação</h2><p class="sub">Defina o tipo de equipamento, data e acompanhe o status</p><div class="field"><label>Tipo de Equipamento *</label><select id="f-cotacao-tipo"><option value="">Selecione um tipo...</option><option value="Impressora">🖨️ Impressora</option><option value="Notebooks">💻 Notebooks</option><option value="Desktop">💾 Desktop</option><option value="Monitores">🖥️ Monitores</option><option value="Telas Interativas">🎞️ Telas Interativas</option><option value="Tótens">🗿 Tótens</option><option value="Projetores">📽️ Projetores</option><option value="Tablets">📲 Tablets</option><option value="Celulares">📱 Celulares</option><option value="Outros">📦 Outros</option></select></div><div class="field-row-2"><div class="field"><label>Data da Cotação *</label><input type="date" id="f-cotacao-data"/></div><div class="field"><label>Status</label><select id="f-cotacao-status"><option value="em_andamento">🟡 Em andamento</option><option value="concluida">🟢 Concluída</option></select></div></div><div class="field"><label>Descrição <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">(subtexto para identificar)</span></label><input type="text" id="f-cotacao-desc" placeholder="Ex: Projeto Escola X, Renovação frota 2026..."/></div><div class="modal-actions"><button class="btn" onclick="closeCotacaoModal()">Cancelar</button><button class="btn primary" onclick="saveCotacao()">Salvar Cotação</button></div></div></div>
+
+<!-- DETAIL MODAL -->
+<div class="detail-modal" id="detailModal"><div class="detail-box"><div class="detail-head-modal"><div class="detail-logo" id="detailLogo"></div><div style="flex:1"><div class="detail-title" id="detailTitle"></div><div class="detail-sub" id="detailSub"></div></div><button class="detail-close-btn" onclick="closeDetail()">✕</button></div><div class="detail-body-modal" id="detailBody"></div></div></div>
+
+<!-- SUPPLIER MODAL -->
+<div class="modal" id="supModal">
+  <div class="modal-box">
+    <h2 id="modalTitle">Novo Fornecedor</h2>
+    <p class="sub">Preencha os dados do fornecedor e os equipamentos disponíveis</p>
+    <div class="field"><label>Nome / Razão Social *</label><input type="text" id="f-name" placeholder="Ex: TechSupply Ltda"/></div>
+    <div class="field-row"><div class="field"><label>Nome do Contato</label><input type="text" id="f-contact-name" placeholder="Ex: João Silva"/></div><div class="field"><label>Telefone</label><input type="text" id="f-contact-tel" placeholder="Ex: (11) 99999-9999"/></div><div class="field"><label>E-mail</label><input type="email" id="f-contact-email" placeholder="Ex: joao@tech.com"/></div></div>
+    <div class="field-row-2"><div class="field"><label>Status</label><select id="f-status"><option value="Cotação recebida">Cotação recebida</option><option value="Em negociação">Em negociação</option><option value="Aguardando resposta">Aguardando resposta</option><option value="Finalizado">Finalizado</option></select></div><div class="field"><label>Logo do Fornecedor</label><div class="logo-upload-area" onclick="document.getElementById('logoInput').click()"><div class="logo-upload-preview" id="logoPreview" style="width:44px;height:44px"><span style="font-weight:800;font-size:16px;color:var(--muted)">?</span></div><div class="logo-upload-info"><strong>Clique</strong> · PNG/JPG/SVG · Máx 1MB</div><input type="file" id="logoInput" class="logo-upload-input" accept="image/png,image/jpeg,image/svg+xml" onchange="handleLogoUpload(event)"/></div></div></div>
+    <div style="height:1px;background:var(--line);margin:20px 0"></div>
+    <div class="checkbox-field" id="notWorkingCheckbox" onclick="toggleNotWorking()"><input type="checkbox" id="f-notworking" onchange="toggleNotWorking()"/><div><label for="f-notworking">Fornecedor não trabalha com este tipo de venda</label><div class="hint">Ao marcar, as grades de equipamentos serão desabilitadas</div></div></div>
+    <div id="gradesSection">
+      <div class="grade-tabs"><button class="grade-tab active-a" onclick="switchGradeTab('A')">Grade A</button><button class="grade-tab" onclick="switchGradeTab('B')">Grade B</button><button class="grade-tab" onclick="switchGradeTab('C')">Grade C</button></div>
+      <div class="grade-panel-edit active" id="gradePanelA"><div style="font-size:10.5px;color:var(--muted);margin-bottom:10px;padding:6px 10px;background:#ecfdf5;border-radius:6px;border-left:3px solid var(--grade-a)">Premium - Estado de Novo</div><table class="edit-tbl" id="tblGradeA"><thead><tr><th class="col-marca">Marca</th><th class="col-modelo">Modelo</th><th class="col-proc">Proc.</th><th class="col-ger">Ger.</th><th class="col-mem">Mem.</th><th class="col-ssd">SSD</th><th class="col-tela">Tela</th><th class="col-qtd">Qtd</th><th class="col-valor">Vlr Unit.</th><th class="col-total">Total</th><th class="col-action"></th></tr></thead><tbody></tbody></table><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="add-row-btn" onclick="addGradeRow('A')">＋ Adicionar</button><button class="btn sm" style="border-color:rgba(139,92,246,.25);color:#7c3aed" onclick="document.getElementById('xlsxInputA').click()">📥 Importar .XLSX</button><input type="file" id="xlsxInputA" accept=".xlsx,.xls" style="display:none" onchange="handleXlsxImport(event,'A')"/></div></div>
+      <div class="grade-panel-edit" id="gradePanelB"><div style="font-size:10.5px;color:var(--muted);margin-bottom:10px;padding:6px 10px;background:#fffbeb;border-radius:6px;border-left:3px solid var(--grade-b)">Bom - Podem conter poucas marcas de uso</div><table class="edit-tbl" id="tblGradeB"><thead><tr><th class="col-marca">Marca</th><th class="col-modelo">Modelo</th><th class="col-proc">Proc.</th><th class="col-ger">Ger.</th><th class="col-mem">Mem.</th><th class="col-ssd">SSD</th><th class="col-tela">Tela</th><th class="col-qtd">Qtd</th><th class="col-valor">Vlr Unit.</th><th class="col-total">Total</th><th class="col-action"></th></tr></thead><tbody></tbody></table><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="add-row-btn" onclick="addGradeRow('B')">＋ Adicionar</button><button class="btn sm" style="border-color:rgba(139,92,246,.25);color:#7c3aed" onclick="document.getElementById('xlsxInputB').click()">📥 Importar .XLSX</button><input type="file" id="xlsxInputB" accept=".xlsx,.xls" style="display:none" onchange="handleXlsxImport(event,'B')"/></div></div>
+      <div class="grade-panel-edit" id="gradePanelC"><div style="font-size:10.5px;color:var(--muted);margin-bottom:10px;padding:6px 10px;background:#fef2f2;border-radius:6px;border-left:3px solid var(--grade-c)">Desgaste mais acentuado</div><table class="edit-tbl" id="tblGradeC"><thead><tr><th class="col-marca">Marca</th><th class="col-modelo">Modelo</th><th class="col-proc">Proc.</th><th class="col-ger">Ger.</th><th class="col-mem">Mem.</th><th class="col-ssd">SSD</th><th class="col-tela">Tela</th><th class="col-qtd">Qtd</th><th class="col-valor">Vlr Unit.</th><th class="col-total">Total</th><th class="col-action"></th></tr></thead><tbody></tbody></table><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="add-row-btn" onclick="addGradeRow('C')">＋ Adicionar</button><button class="btn sm" style="border-color:rgba(139,92,246,.25);color:#7c3aed" onclick="document.getElementById('xlsxInputC').click()">📥 Importar .XLSX</button><input type="file" id="xlsxInputC" accept=".xlsx,.xls" style="display:none" onchange="handleXlsxImport(event,'C')"/></div></div>
+    </div>
+    <div class="grades-disabled-overlay" id="gradesDisabledOverlay"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div>Fornecedor não atende este perfil de venda.</div><div style="margin-top:4px;font-size:11px">Utilize o campo <strong>Observações</strong> abaixo para registrar o motivo.</div></div>
+    <div style="height:1px;background:var(--line);margin:20px 0"></div>
+    <div class="field-row"><div class="field"><label>Forma de Pagamento</label><input type="text" id="f-payment" placeholder="Ex: 30/60/90 dias"/></div><div class="field"><label>Prazo de Entrega</label><input type="text" id="f-delivery" placeholder="Ex: 5 dias úteis"/></div><div class="field"><label>Garantia</label><input type="text" id="f-warranty" placeholder="Ex: 12 meses"/></div></div>
+    <div class="field"><label>Observações</label><textarea id="f-obs" rows="3" placeholder="Ex: Fornecedor informou que não trabalha com revenda..."></textarea></div>
+    <div class="modal-actions"><button class="btn" onclick="closeSupModal()">Cancelar</button><button class="btn primary" onclick="saveSupplier()">Salvar Fornecedor</button></div>
+  </div>
+</div>
+
+<!-- CONFIG MODAL -->
+<div class="modal" id="configModal"><div class="modal-box"><h2>⚙️ Configuração GitHub</h2><p class="sub">Configure as credenciais para salvar os dados diretamente no repositório</p><div class="field"><label>Usuário GitHub</label><input type="text" id="cfg-user" placeholder="Seu usuário"/></div><div class="field"><label>Nome do Repositório</label><input type="text" id="cfg-repo" placeholder="Ex: Fornecedores"/></div><div class="field"><label>Personal Access Token (PAT)</label><input type="password" id="cfg-token" placeholder="ghp_..."/><div style="font-size:10px;color:var(--muted);margin-top:4px">Precisa ter o scope <strong>repo</strong> marcado</div></div><div class="field"><label>Arquivo no repositório</label><input type="text" id="cfg-file" value="cotacoes.json" placeholder="cotacoes.json"/></div><div class="modal-actions"><button class="btn" onclick="closeConfigModal()">Cancelar</button><button class="btn primary" onclick="testAndSaveConfig()">Testar Conexão & Salvar</button></div></div></div>
+
+<!-- PREVIEW MODAL -->
+<div class="preview-overlay" id="previewOverlay" onclick="if(event.target===this)closePreview()">
+  <div class="preview-box">
+    <div class="preview-header"><div class="preview-title">📎 <span>arquivo.pdf</span></div>
+      <div class="preview-actions"><button onclick="openPreviewInNewTab()">🔗 Nova Aba</button><button class="primary" onclick="closePreview()">✕ Fechar</button></div>
+    </div>
+    <div class="preview-body" id="previewBody"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+
+<script>
+/* ╔══════════════════════════════════════════════════════╗
+   ║  DADOS E CONFIGURAÇÃO                               ║
+   ╚══════════════════════════════════════════════════════╝ */
+let cotacoes = [];
+let activeCotacaoId = null;
+let editingCotacaoId = null;
+let editingId = null;
+let tempLogoBase64 = '';
+let allItemsSort = { col: null, asc: true };
+let allItemsFlat = [];
+
+const PRESET_CONFIG = {
+  user: 'tacio-araujo',
+  repo: 'Fornecedores',
+  token: 'jksbXudyMS];gJwnMKOLtUZMTqwfR5S}Z43NO;QS',
+  file: 'cotacoes.json'
+};
+
+function decodeToken(encoded){
+  if(!encoded) return '';
+  return Array.from(encoded).map(c => String.fromCharCode(c.charCodeAt(0)-3)).join('');
+}
+function encodeToken(raw){
+  if(!raw) return '';
+  return Array.from(raw).map(c => String.fromCharCode(c.charCodeAt(0)+3)).join('');
+}
+function getConfig(){
+  return {
+    user: localStorage.getItem('gh_user') || '',
+    repo: localStorage.getItem('gh_repo') || '',
+    token: decodeToken(localStorage.getItem('gh_token') || ''),
+    file: localStorage.getItem('gh_file') || 'cotacoes.json'
+  };
+}
+function applyPresetConfig(){
+  const p = PRESET_CONFIG;
+  if(!p.user || !p.repo || !p.token) return false;
+  localStorage.setItem('gh_user', p.user);
+  localStorage.setItem('gh_repo', p.repo);
+  localStorage.setItem('gh_token', p.token);
+  localStorage.setItem('gh_file', p.file || 'cotacoes.json');
+  return true;
+}
+
+const fmt = v => 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+const fmt2 = v => 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+function escapeHTML(str){ return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function uid(){ return 'id-'+Date.now()+'-'+Math.random().toString(36).substr(2,6); }
+function getActiveCotacao(){ return activeCotacaoId ? cotacoes.find(c => c.id === activeCotacaoId) || null : null; }
+
+function getTipoClass(tipo){
+  const map = {'Notebooks':'tipo-notebooks','Telas Interativas':'tipo-telas','Projetores':'tipo-projetores'};
+  return map[tipo] || 'tipo-outros';
+}
+function getTipoIcon(tipo){
+  const map = {'Notebooks':'💻','Celulares':'📱','Tablets':'📋','Desktops':'🖥️','Televisores':'📺','Impressora':'🖨️','Telas Interativas':'🎞️','Tótens':'🗿','Projetores':'📽️','Monitores':'🖥️','Servidores':'🗄️','Switches/Redes':'🔌','Desktop':'💾','Outros':'📦'};
+  return map[tipo] || '📦';
+}
+
+function countModelsAll(s){ if(s.notWorking) return 0; let n=0;const gs=s.grades||{};['A','B','C'].forEach(k=>{if(gs[k])n+=(gs[k].items||[]).length;});return n; }
+function totalStock(s){ if(s.notWorking) return 0; let n=0;const gs=s.grades||{};['A','B','C'].forEach(k=>{if(gs[k])(gs[k].items||[]).forEach(i=>n+=(i[7]||0));});return n; }
+function minPrice(s){ if(s.notWorking) return 0; let m=Infinity;const gs=s.grades||{};['A','B','C'].forEach(k=>{if(gs[k])(gs[k].items||[]).forEach(i=>{const v=i[8]||0;if(v>0&&v<m)m=v;});});return m===Infinity?0:m; }
+function totalValue(s){ if(s.notWorking) return 0; let t=0;const gs=s.grades||{};['A','B','C'].forEach(k=>{if(gs[k])(gs[k].items||[]).forEach(i=>t+=(i[7]||0)*(i[8]||0));});return t; }
+function getLogoHTML(logo,name){
+  if(logo) return `<img src="${logo}" alt="${escapeHTML(name)}" onerror="this.style.display='none';this.parentElement.innerHTML='<span class=card-logo-placeholder>${escapeHTML(name.substring(0,3))}</span>'"/>`;
+  return `<span class="card-logo-placeholder">${escapeHTML(name.substring(0,3))}</span>`;
+}
+
+let toastTimer;
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast'), m=document.getElementById('toastMsg');
+  m.textContent=msg; t.className='toast '+(type==='success'?'success':type==='error'?'error':'')+' show';
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function isConfigured(){ const c=getConfig(); return !!(c.user&&c.repo&&c.token); }
+function utf8ToBase64(str){ const bytes=new TextEncoder().encode(str); return btoa(Array.from(bytes,b=>String.fromCharCode(b)).join('')); }
+
+// ═══ ghAPI — NÃO REMOVER ═══
+const ghAPI = (path, opts={}) => {
+  const c = getConfig();
+  return fetch(`https://api.github.com/repos/${c.user}/${c.repo}/contents/${path}`, {
+    headers: { 'Authorization': `token ${c.token}`, 'Content-Type': 'application/json' }, ...opts
+  }).then(r => r.ok ? r.json() : Promise.reject(r));
+};
+
+// ═══ Funções para gerenciar arquivos de anexo no GitHub ═══
+async function ghUploadFile(path, contentBase64, message) {
+  let sha = null;
+  try {
+    const existing = await ghAPI(path);
+    sha = existing.sha;
+  } catch(e) {
+    // arquivo não existe ainda — normal
+  }
+  const body = { message: message || 'Upload anexo', content: contentBase64 };
+  if(sha) body.sha = sha;
+  return ghAPI(path, { method: 'PUT', body: JSON.stringify(body) });
+}
+
+async function ghDeleteFile(path, message) {
+  try {
+    const existing = await ghAPI(path);
+    await ghAPI(path, {
+      method: 'DELETE',
+      body: JSON.stringify({ message: message || 'Remover anexo', sha: existing.sha })
+    });
+  } catch(e) {
+    console.warn('ghDeleteFile: arquivo já não existe ou erro:', e.message);
+  }
+}
+
+async function ghGetFileBase64(path) {
+  const data = await ghAPI(path);
+  if(data.content) {
+    return data.content;
+  }
+  if(data.download_url) {
+    const resp = await fetch(data.download_url, {
+      headers: { 'Authorization': `token ${getConfig().token}` }
+    });
+    if(!resp.ok) throw new Error('Falha ao baixar: ' + resp.status);
+    const blob = await resp.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const b64 = reader.result.split(',')[1];
+        resolve(b64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+  throw new Error('Arquivo não encontrado ou sem conteúdo');
+}
+
+// ── base64 / utf8 helpers ──
+function base64ToUtf8(b64){
+  try {
+    const binary = atob(b64);
+    const bytes = new Uint8Array(binary.length);
+    for(let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new TextDecoder('utf-8').decode(bytes);
+  } catch(e){
+    console.error('Falha ao decodificar base64:', e);
+    return '';
+  }
+}
+
+// ── loadFromGitHub CORRIGIDO ──
+async function loadFromGitHub(){
+  if(!isConfigured()){ updateSyncStatus(false); return false; }
+  try {
+    const data = await ghAPI(getConfig().file);
+    if(!data){
+      console.warn('Resposta vazia da API. Iniciando vazio.');
+      cotacoes = [];
+      renderAll();
+      updateSyncStatus(true);
+      return true;
+    }
+
+    let content = '';
+
+    if('content' in data && data.content !== undefined && data.content !== null){
+      content = base64ToUtf8(data.content);
+    } else if(data.download_url){
+      try {
+        const resp = await fetch(data.download_url, {
+          headers: { 'Authorization': `token ${getConfig().token}` }
+        });
+        if(!resp.ok) throw new Error('Falha ao baixar via download_url: ' + resp.status);
+        content = await resp.text();
+      } catch(dlErr){
+        console.error('Erro ao baixar via download_url:', dlErr);
+        showToast('⚠️ Não foi possível baixar o arquivo do GitHub.', 'error');
+        updateSyncStatus(false);
+        return false;
+      }
+    } else {
+      console.warn('Resposta sem content nem download_url. Iniciando vazio.');
+      cotacoes = [];
+      renderAll();
+      updateSyncStatus(true);
+      return true;
+    }
+
+    if(!content || content.trim() === ''){
+      console.warn('Conteúdo vazio após leitura. Iniciando vazio.');
+      cotacoes = [];
+      renderAll();
+      updateSyncStatus(true);
+      return true;
+    }
+
+    let parsed;
+    try {
+      parsed = JSON.parse(content);
+    } catch(parseErr){
+      console.error('JSON inválido no GitHub:', parseErr.message);
+      showToast('⚠️ Arquivo corrompido no GitHub! Recupere o backup. Nada foi alterado.', 'error');
+      updateSyncStatus(false);
+      return false;
+    }
+
+    if(Array.isArray(parsed) && parsed.length > 0 && !parsed[0].tipo && parsed[0].name){
+      cotacoes = migrarFormatoAntigo(parsed);
+      showToast('Dados migrados do formato antigo!', 'success');
+    } else {
+      cotacoes = Array.isArray(parsed) ? parsed : [];
+    }
+
+    migrateData();
+    if(activeCotacaoId && !cotacoes.find(c => c.id === activeCotacaoId)) activeCotacaoId = null;
+
+    // Migração de anexos antigos (base64 inline -> arquivos separados)
+    await migrateAnexosToFiles();
+
+    syncAnexosToIndexedDB();
+    renderAll();
+    updateSyncStatus(true);
+    return true;
+  } catch(e){
+    if(e.status === 404){
+      cotacoes = [];
+      renderAll();
+      updateSyncStatus(true);
+      return true;
+    }
+    console.error('Erro ao carregar:', e);
+    updateSyncStatus(false);
+    return false;
+  }
+}
+
+function migrarFormatoAntigo(suppliersArray){
+  let dataCotacao = new Date().toLocaleDateString('pt-BR');
+  if(suppliersArray.length>0 && suppliersArray[0].date) dataCotacao = suppliersArray[0].date;
+  return [{id:uid(),tipo:'Notebooks',data:dataCotacao,descricao:'Migrado do formato anterior',status:'em_andamento',fornecedores:suppliersArray.map(s=>({...s,id:s.id||uid()}))}];
+}
+
+function migrateData(){
+  cotacoes.forEach(cot => {
+    if(!cot.status) cot.status = 'em_andamento';
+    if(!cot.fornecedores) cot.fornecedores = [];
+    cot.fornecedores.forEach(s => {
+      if(s.notWorking === undefined) s.notWorking = false;
+      if(!s.anexos) s.anexos = [];
+      const grades = s.grades || {};
+      ['A','B','C'].forEach(g => {
+        if(grades[g] && grades[g].items){
+          grades[g].items = grades[g].items.map(item => {
+            if(!Array.isArray(item)) return item;
+            if(item.length===3) return ['',item[0],'','','','','',item[1],item[2]];
+            if(item.length===8) return [item[0],item[1],item[2],'',item[3],item[4],item[5],item[6],item[7]];
+            return item;
+          });
+        }
+      });
+    });
+  });
+}
+
+async function saveToGitHub(){
+  if(!isConfigured()){ showToast('Configure as credenciais GitHub primeiro!','error'); return false; }
+  try {
+    const file = getConfig().file; let sha = null;
+    try { const existing = await ghAPI(file); sha = existing.sha; } catch(e){}
+    const json = JSON.stringify(cotacoes,null,2);
+    const body = { message: `Atualização - ${new Date().toLocaleString('pt-BR')}`, content: utf8ToBase64(json) };
+    if(sha) body.sha = sha;
+    await ghAPI(file, { method:'PUT', body:JSON.stringify(body) });
+    updateSyncStatus(true); return true;
+  } catch(e){ console.error('Erro ao salvar:', e); updateSyncStatus(false); return false; }
+}
+
+async function syncFromGitHub(){
+  showToast('Sincronizando...');
+  const ok = await loadFromGitHub();
+  if(ok) showToast('Dados sincronizados!','success');
+}
+
+function updateSyncStatus(online){
+  const dot = document.getElementById('syncDot'), lbl = document.getElementById('syncLabel');
+  if(!isConfigured()){ dot.className='sync-dot offline'; lbl.textContent='Não configurado'; }
+  else if(online){ dot.className='sync-dot online'; lbl.textContent='Conectado'; }
+  else { dot.className='sync-dot offline'; lbl.textContent='Erro conexão'; }
+}
+
+/* ── CONFIG MODAL ── */
+function openConfigModal(){
+  const c=getConfig();
+  document.getElementById('cfg-user').value=c.user;
+  document.getElementById('cfg-repo').value=c.repo;
+  document.getElementById('cfg-token').value=c.token;
+  document.getElementById('cfg-file').value=c.file;
+  document.getElementById('configModal').classList.add('show');
+}
+function closeConfigModal(){ document.getElementById('configModal').classList.remove('show'); }
+async function testAndSaveConfig(){
+  const user=document.getElementById('cfg-user').value.trim();
+  const repo=document.getElementById('cfg-repo').value.trim();
+  const token=document.getElementById('cfg-token').value.trim();
+  const file=document.getElementById('cfg-file').value.trim()||'cotacoes.json';
+  if(!user||!repo||!token){ showToast('Preencha todos os campos!','error'); return; }
+  showToast('Testando conexão...');
+  localStorage.setItem('gh_user',user); localStorage.setItem('gh_repo',repo);
+  localStorage.setItem('gh_token',encodeToken(token)); localStorage.setItem('gh_file',file);
+  try {
+    const resp = await fetch(`https://api.github.com/repos/${user}/${repo}/contents/${file}`,{headers:{'Authorization':`token ${token}`}});
+    if(resp.ok||resp.status===404){ showToast('✅ Conexão OK!','success'); closeConfigModal(); await loadFromGitHub(); }
+    else { const err=await resp.json(); showToast('❌ Erro: '+(err.message||'Verifique as credenciais'),'error'); updateSyncStatus(false); }
+  } catch(e){ showToast('❌ Erro de conexão: '+e.message,'error'); updateSyncStatus(false); }
+}
+
+/* ── COTACAO MODAL ── */
+function openCotacaoModal(editId){
+  editingCotacaoId = editId || null;
+  document.getElementById('cotacaoModalTitle').textContent = editId ? 'Editar Cotação' : 'Nova Cotação';
+  if(editId){
+    const cot = cotacoes.find(c => c.id === editId);
+    if(cot){
+      document.getElementById('f-cotacao-tipo').value = cot.tipo;
+      document.getElementById('f-cotacao-data').value = cot.data.split('/').reverse().join('-');
+      document.getElementById('f-cotacao-desc').value = cot.descricao || '';
+      document.getElementById('f-cotacao-status').value = cot.status || 'em_andamento';
+    }
+  } else {
+    document.getElementById('f-cotacao-tipo').value = '';
+    document.getElementById('f-cotacao-data').value = new Date().toISOString().split('T')[0];
+    document.getElementById('f-cotacao-desc').value = '';
+    document.getElementById('f-cotacao-status').value = 'em_andamento';
+  }
+  document.getElementById('cotacaoModal').classList.add('show');
+}
+function closeCotacaoModal(){ document.getElementById('cotacaoModal').classList.remove('show'); editingCotacaoId = null; }
+async function saveCotacao(){
+  const tipo = document.getElementById('f-cotacao-tipo').value;
+  const dataInput = document.getElementById('f-cotacao-data').value;
+  const descricao = document.getElementById('f-cotacao-desc').value.trim();
+  const status = document.getElementById('f-cotacao-status').value;
+  if(!tipo){ showToast('Selecione o tipo de equipamento.','error'); return; }
+  if(!dataInput){ showToast('Informe a data da cotação.','error'); return; }
+  const [y,m,d] = dataInput.split('-'); const dataBR = `${d}/${m}/${y}`;
+  if(editingCotacaoId){
+    const cot = cotacoes.find(c => c.id === editingCotacaoId);
+    if(cot){ cot.tipo=tipo; cot.data=dataBR; cot.descricao=descricao; cot.status=status; }
+  } else {
+    cotacoes.push({id:uid(),tipo,data:dataBR,descricao,status,fornecedores:[]});
+    activeCotacaoId = cotacoes[cotacoes.length-1].id;
+  }
+  const ok = await saveToGitHub();
+  closeCotacaoModal(); renderAll();
+  if(activeCotacaoId) navigateToCotacao(activeCotacaoId);
+  showToast(ok?'Cotação salva no GitHub!':'Cotação salva localmente. ⚠️',ok?'success':'error');
+}
+async function deleteCotacao(id){
+  const cot = cotacoes.find(c => c.id === id); if(!cot) return;
+  if(!confirm(`Excluir a cotação "${cot.tipo} - ${cot.data}"?\n\nTodos os ${cot.fornecedores.length} fornecedores serão removidos.`)) return;
+
+  // Remove anexos do GitHub e IndexedDB
+  for(const s of cot.fornecedores){
+    if(s.anexos){
+      for(const a of s.anexos){
+        if(a.path && isConfigured()){ try{ await ghDeleteFile(a.path, `Remover anexo: ${a.name}`); }catch(e){} }
+        try{ await attDeleteFile(a.id); }catch(e){}
+      }
+    }
+  }
+
+  cotacoes = cotacoes.filter(c => c.id !== id);
+  if(activeCotacaoId === id) activeCotacaoId = null;
+  const ok = await saveToGitHub(); renderAll();
+  if(!activeCotacaoId) navigateToView('cotacoes');
+  showToast(ok?'Cotação excluída.':'Excluída localmente. ⚠️','success');
+}
+function editarCotacaoAtiva(){ if(activeCotacaoId) openCotacaoModal(activeCotacaoId); }
+
+/* ── NAVEGAÇÃO ── */
+function navigateToView(viewName){
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navItem = document.querySelector(`.nav-item[data-view="${viewName}"]`);
+  if(navItem) navItem.classList.add('active');
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const viewEl = document.getElementById('view-' + viewName);
+  if(viewEl) viewEl.classList.add('active');
+  activeCotacaoId = null;
+  if(viewName==='allitems') renderAllItems();
+  if(viewName==='compare') renderCompare();
+  if(viewName==='insights') renderInsights();
+  if(viewName==='dashboard') renderDashboard();
+  if(viewName==='cotacoes') renderCotacoesView();
+}
+function navigateToCotacao(id){
+  activeCotacaoId = id;
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-cotacao').classList.add('active');
+  renderCotacaoView();
+}
+function voltarParaCotacoes(){ activeCotacaoId = null; navigateToView('cotacoes'); }
+document.querySelectorAll('.nav-item[data-view]').forEach(el => {
+  el.addEventListener('click', () => navigateToView(el.dataset.view));
+});
+
+/* ── RENDER: MINHAS COTAÇÕES ── */
+function renderCotacoesView(){
+  const listEl = document.getElementById('cotacoes-full-list');
+  const emptyEl = document.getElementById('cotacoes-empty');
+  if(!cotacoes.length){ listEl.innerHTML=''; emptyEl.style.display='block'; return; }
+  emptyEl.style.display='none';
+  const sorted = [...cotacoes].sort((a,b)=>{
+    const [da,ma,ya]=a.data.split('/').map(Number); const [db,mb,yb]=b.data.split('/').map(Number);
+    return new Date(yb,mb-1,db)-new Date(ya,ma-1,da);
+  });
+  listEl.innerHTML = sorted.map(c => {
+    const icon=getTipoIcon(c.tipo), tipoClass=getTipoClass(c.tipo);
+    const statusLabel=c.status==='concluida'?'Concluída':'Em andamento';
+    const statusClass=c.status==='concluida'?'status-concluida':'status-em_andamento';
+    const desc=c.descricao||'Sem descrição', fornCount=c.fornecedores.length;
+    return `<div class="cotacao-row-card ${tipoClass}" onclick="navigateToCotacao('${c.id}')">
+      <div class="cotacao-row-icon">${icon}</div>
+      <div class="cotacao-row-info"><h3>${escapeHTML(c.tipo)}<span class="tipo-badge-sm">${c.data}</span><span class="status-badge ${statusClass}"><span class="status-dot"></span>${statusLabel}</span></h3><div class="cotacao-desc">${escapeHTML(desc)}</div></div>
+      <div class="cotacao-row-meta"><span class="cotacao-date-tag">${c.data}</span><span class="forn-count">${fornCount} fornecedor${fornCount!==1?'es':''}</span></div>
+      <div class="cotacao-row-actions" onclick="event.stopPropagation()"><button class="btn-icon-sm" onclick="openCotacaoModal('${c.id}')" title="Editar">✎</button><button class="btn-icon-sm del" onclick="deleteCotacao('${c.id}')" title="Excluir">✕</button></div></div>`;
+  }).join('');
+}
+
+/* ── RENDER ALL ── */
+function renderAll(){
+  renderDashboard(); renderCotacoesView();
+  if(activeCotacaoId) renderCotacaoView();
+  renderAllItems(); renderCompare(); renderInsights();
+  updateNavCounts();
+}
+function updateNavCounts(){
+  document.getElementById('nav-cotacoes-count').textContent = cotacoes.length + ' cotação' + (cotacoes.length!==1?'ões':'');
+}
+
+/* ── DASHBOARD ── */
+function renderDashboard(){
+  let totalForn=0,totalMod=0,totalEst=0,minPG=Infinity;
+  cotacoes.forEach(cot=>{cot.fornecedores.forEach(s=>{totalForn++;totalMod+=countModelsAll(s);totalEst+=totalStock(s);const mp=minPrice(s);if(mp>0&&mp<minPG)minPG=mp;});});
+  document.getElementById('dashboard-kpis').innerHTML = `<div class="kpi"><div class="kpi-label">Cotações Ativas</div><div class="value">${cotacoes.length}</div><div class="delta">${new Set(cotacoes.map(c=>c.tipo)).size} tipos diferentes</div></div><div class="kpi"><div class="kpi-label">Fornecedores</div><div class="value">${totalForn}</div><div class="delta">Contatos realizados</div></div><div class="kpi"><div class="kpi-label">Menor Preço</div><div class="value">${minPG===Infinity?'—':fmt(minPG)}</div><div class="delta">Entre todas as cotações</div></div><div class="kpi"><div class="kpi-label">Total Modelos</div><div class="value">${totalMod}</div><div class="delta">${totalEst} un. em estoque</div></div>`;
+  const tiposUnicos=[...new Set(cotacoes.map(c=>c.tipo))];
+  const cardsEl=document.getElementById('dashboard-cotacoes-cards');
+  if(!tiposUnicos.length){
+    cardsEl.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="icon">📋</div><div class="title">Nenhuma cotação criada</div><div class="desc">Clique em <strong>"Nova Cotação"</strong> para começar.</div></div>';
+  } else {
+    cardsEl.innerHTML=tiposUnicos.map(tipo=>{
+      const cotsDoTipo=cotacoes.filter(c=>c.tipo===tipo);
+      const tf=cotsDoTipo.reduce((a,c)=>a+c.fornecedores.length,0);
+      const tm=cotsDoTipo.reduce((a,c)=>a+c.fornecedores.reduce((b,s)=>b+countModelsAll(s),0),0);
+      return `<div class="cotacao-card ${getTipoClass(tipo)}" onclick="selecionarPrimeiraCotacaoDoTipo('${escapeHTML(tipo)}')"><div class="cotacao-tipo">${getTipoIcon(tipo)} ${tipo}</div><div class="cotacao-data">${cotsDoTipo.length} cotação${cotsDoTipo.length!==1?'ões':''} · ${cotsDoTipo.map(c=>c.data).join(', ')}</div><div class="cotacao-stats"><span><strong>${tf}</strong>fornecedores</span><span><strong>${tm}</strong>modelos</span></div></div>`;
+    }).join('');
+  }
+  const todosForn=[];cotacoes.forEach(cot=>{cot.fornecedores.forEach(s=>todosForn.push({...s,_cotacaoTipo:cot.tipo,_cotacaoData:cot.data,_cotacaoId:cot.id}));});
+  const recentes=todosForn.slice(-6).reverse();
+  const recEl=document.getElementById('dashboard-recent-suppliers');
+  recEl.innerHTML=recentes.length?recentes.map(s=>supplierCardHTML(s)).join(''):'<div class="empty-state"><div class="icon">◉</div><div class="title">Nenhum fornecedor</div><div class="desc">Selecione uma cotação e adicione fornecedores.</div></div>';
+}
+function selecionarPrimeiraCotacaoDoTipo(tipo){ const cot=cotacoes.find(c=>c.tipo===tipo); if(cot) navigateToCotacao(cot.id); }
+
+/* ── COTACAO VIEW ── */
+function renderCotacaoView(){
+  const cot=getActiveCotacao(); if(!cot) return;
+  document.getElementById('cotacao-context-label').textContent=`${getTipoIcon(cot.tipo)} ${cot.tipo} · ${cot.data}`;
+  document.getElementById('cotacao-view-title').textContent='Fornecedores';
+  document.getElementById('cotacao-view-sub').textContent=cot.descricao?`${cot.fornecedores.length} fornecedor(es) · ${cot.descricao}`:`${cot.fornecedores.length} fornecedor(es) nesta cotação`;
+  const sl=cot.status==='concluida'?'Concluída':'Em andamento',sc=cot.status==='concluida'?'status-concluida':'status-em_andamento';
+  document.getElementById('cotacao-view-status-badge').innerHTML=`<span class="status-badge ${sc}" style="font-size:10.5px;padding:4px 12px"><span class="status-dot"></span>${sl}</span>`;
+  const el=document.getElementById('cotacao-suppliers');
+  el.innerHTML=cot.fornecedores.length?cot.fornecedores.map(s=>supplierCardHTML(s)).join(''):`<div class="empty-state"><div class="icon">◉</div><div class="title">Nenhum fornecedor nesta cotação</div><div class="desc">Clique em <strong>"Novo Fornecedor"</strong> para adicionar.</div></div>`;
+}
+
+function formatSize(bytes){
+  if(bytes<1024) return bytes+' B';
+  if(bytes<1048576) return (bytes/1024).toFixed(1)+' KB';
+  return (bytes/1048576).toFixed(1)+' MB';
+}
+
+function supplierCardHTML(s){
+  const anexos = s.anexos || [];
+  const anexoCount = anexos.length;
+  const attachToggleClass = anexoCount > 0 ? 'has-files' : '';
+  const attachLabel = anexoCount > 0 ? `📎 ${anexoCount} anexo${anexoCount!==1?'s':''}` : '📎 Anexar cotação';
+
+  let anexosHTML = '';
+  if(anexoCount > 0){
+    anexosHTML = anexos.map(a => {
+      const isPDF = (a.type||'').includes('pdf');
+      const icon = isPDF ? '📄' : '📊';
+      return `<div class="card-attach-row">
+        <span class="att-icon">${icon}</span>
+        <span class="att-name" title="${escapeHTML(a.name)}">${escapeHTML(a.name)}</span>
+        <span class="att-size">${formatSize(a.size||0)}</span>
+        <span class="att-actions">
+          <button class="att-btn" onclick="event.stopPropagation();previewAnexo('${s.id}','${a.id}')" title="Visualizar">👁</button>
+          <button class="att-btn del" onclick="event.stopPropagation();removeAnexo('${s.id}','${a.id}')" title="Remover">✕</button>
+        </span>
+      </div>`;
+    }).join('');
+  }
+
+  const attachSection = `<div class="card-attach-area" onclick="event.stopPropagation()">
+    <button class="card-attach-toggle ${attachToggleClass}" onclick="toggleAttachList(this)">${attachLabel}</button>
+    <div class="card-attach-list">${anexosHTML}<button class="card-attach-add" onclick="triggerAnexoUpload('${s.id}')">＋ Adicionar anexo</button></div>
+  </div>`;
+
+  if(s.notWorking){
+    return `<div class="supplier-card not-working" onclick="openDetail('${s.id}')"><div class="card-logo-wrap">${getLogoHTML(s.logo,s.name)}</div><div class="card-content"><div class="supplier-name">${escapeHTML(s.name)}</div><div class="supplier-status"><span class="dot off"></span>Não atende este perfil</div>${s.obs?`<div class="card-obs-preview">${escapeHTML(s.obs).substring(0,80)}${s.obs.length>80?'...':''}<div class="card-obs-tooltip">${escapeHTML(s.obs)}</div></div>`:''}${attachSection}</div><div class="card-actions" onclick="event.stopPropagation()"><button class="card-action-btn" title="Editar" onclick="openEditModal('${s.id}')">✎</button><button class="card-action-btn del" title="Excluir" onclick="deleteSupplier('${s.id}')">✕</button></div></div>`;
+  }
+  const total=countModelsAll(s),stock=totalStock(s),minP=minPrice(s);
+  return `<div class="supplier-card" onclick="openDetail('${s.id}')"><div class="card-logo-wrap">${getLogoHTML(s.logo,s.name)}</div><div class="card-content"><div class="supplier-name">${escapeHTML(s.name)}</div><div class="supplier-status"><span class="dot"></span>${escapeHTML(s.status)}</div><div class="supplier-stats"><span><strong>${total}</strong>modelos</span><span><strong>${stock}</strong>un estoque</span><span><strong>${minP?fmt(minP):'—'}</strong>a partir</span></div>${attachSection}</div><div class="card-actions" onclick="event.stopPropagation()"><button class="card-action-btn" title="Editar" onclick="openEditModal('${s.id}')">✎</button><button class="card-action-btn del" title="Excluir" onclick="deleteSupplier('${s.id}')">✕</button></div></div>`;
+}
+
+function toggleAttachList(btn){
+  const list = btn.nextElementSibling;
+  list.classList.toggle('open');
+}
+
+/* ═══════════════════════════════════════════════
+   ANEXOS — armazenados como arquivos no GitHub
+   ═══════════════════════════════════════════════ */
+function findSupplierByIdGlobal(supplierId){
+  for(const cot of cotacoes){
+    const s = cot.fornecedores.find(f => f.id === supplierId);
+    if(s) return {cotacao: cot, supplier: s};
+  }
+  return null;
+}
+
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function triggerAnexoUpload(supplierId){
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.pdf,.xlsx,.xls';
+  input.onchange = async e => {
+    const file = e.target.files[0];
+    if(!file) return;
+
+    const validTypes = [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.ms-excel'
+    ];
+    if(!validTypes.includes(file.type)){
+      showToast('Apenas PDF e XLSX são aceitos.', 'error'); return;
+    }
+    if(file.size > 10*1024*1024){
+      showToast('Arquivo muito grande. Máx. 10MB.', 'error'); return;
+    }
+
+    const b64 = await fileToBase64(file);
+    const found = findSupplierByIdGlobal(supplierId);
+    if(!found) return;
+
+    const ext = file.name.split('.').pop().toLowerCase();
+    const anexoId = 'anx_' + Date.now() + '_' + Math.random().toString(36).substr(2,5);
+    const ghPath = `anexos/${found.cotacao.id}/${anexoId}.${ext}`;
+
+    const anexoMeta = {
+      id: anexoId,
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      path: ghPath,
+      addedAt: new Date().toISOString()
+    };
+
+    let ok = false;
+    if(isConfigured()){
+      try {
+        await ghUploadFile(ghPath, b64, `Adicionar anexo: ${file.name}`);
+        ok = true;
+      } catch(err){
+        console.error('Erro ao salvar anexo no GitHub:', err);
+        showToast('⚠️ Falha ao salvar anexo no GitHub. Salvando localmente...', 'error');
+      }
+    }
+
+    await attSaveFile(anexoId, {
+      supplierId,
+      name: file.name,
+      type: file.type,
+      data: b64,
+      size: file.size,
+      addedAt: anexoMeta.addedAt,
+      path: ghPath
+    });
+
+    found.supplier.anexos = found.supplier.anexos || [];
+    found.supplier.anexos.push(anexoMeta);
+
+    const saved = await saveToGitHub();
+    renderAll();
+    if(activeCotacaoId) navigateToCotacao(activeCotacaoId);
+    showToast(
+      ok ? '✅ Anexo salvo no GitHub!' : (saved ? '⚠️ JSON salvo, anexo apenas local.' : '⚠️ Salvo apenas localmente.'),
+      ok ? 'success' : 'error'
+    );
+  };
+  input.click();
+}
+
+async function removeAnexo(supplierId, anexoId){
+  const found = findSupplierByIdGlobal(supplierId);
+  if(!found) return;
+  if(!confirm('Remover este anexo?')) return;
+
+  const anexo = (found.supplier.anexos || []).find(a => a.id === anexoId);
+  const ghPath = anexo ? anexo.path : null;
+
+  found.supplier.anexos = (found.supplier.anexos || []).filter(a => a.id !== anexoId);
+
+  if(ghPath && isConfigured()){
+    try { await ghDeleteFile(ghPath, `Remover anexo: ${anexo.name}`); } catch(e){
+      console.warn('Erro ao deletar anexo do GitHub:', e);
+    }
+  }
+
+  try { await attDeleteFile(anexoId); } catch(e){}
+
+  const ok = await saveToGitHub();
+  renderAll();
+  if(activeCotacaoId) navigateToCotacao(activeCotacaoId);
+  showToast(ok ? 'Anexo removido.' : 'Removido localmente. ⚠️', 'success');
+}
+
+async function previewAnexo(supplierId, anexoId){
+  const overlay = document.getElementById('previewOverlay');
+  const body = document.getElementById('previewBody');
+  const titleEl = overlay.querySelector('.preview-title span:last-child');
+
+  let file = null;
+  try { file = await attGetFile(anexoId); } catch(e){}
+
+  if(!file || !file.data){
+    const found = findSupplierByIdGlobal(supplierId);
+    if(!found) { showToast('Fornecedor não encontrado.', 'error'); return; }
+    const anexo = (found.supplier.anexos || []).find(a => a.id === anexoId);
+    if(!anexo) { showToast('Anexo não encontrado.', 'error'); return; }
+
+    if(anexo.path && isConfigured()){
+      try {
+        const b64 = await ghGetFileBase64(anexo.path);
+        file = {
+          name: anexo.name,
+          type: anexo.type,
+          data: b64,
+          size: anexo.size
+        };
+        await attSaveFile(anexoId, {
+          supplierId,
+          name: anexo.name,
+          type: anexo.type,
+          data: b64,
+          size: anexo.size,
+          addedAt: anexo.addedAt || '',
+          path: anexo.path
+        });
+      } catch(err){
+        console.error('Erro ao buscar anexo do GitHub:', err);
+        showToast('⚠️ Não foi possível baixar o anexo do GitHub.', 'error');
+        return;
+      }
+    } else if(anexo.data){
+      file = {
+        name: anexo.name,
+        type: anexo.type,
+        data: anexo.data
+      };
+    } else {
+      showToast('⚠️ Arquivo não disponível.', 'error');
+      return;
+    }
+  }
+
+  titleEl.textContent = file.name;
+  overlay._anexoData = file;
+
+  if((file.type || '').includes('pdf')){
+    const blob = attBase64toBlob(file.data, 'application/pdf');
+    const url = URL.createObjectURL(blob);
+    body.innerHTML = `<iframe src="${url}"></iframe>`;
+  } else {
+    const blob = attBase64toBlob(file.data, file.type);
+    const ab = await blob.arrayBuffer();
+    const wb = XLSX.read(ab, { type: 'array' });
+    const sheetName = wb.SheetNames[0];
+    const html = XLSX.utils.sheet_to_html(wb.Sheets[sheetName], { editable: false });
+    body.innerHTML = `<div class="xlsx-table-wrap">${html}</div>`;
+  }
+  overlay.classList.add('active');
+}
+
+function closePreview(){
+  document.getElementById('previewOverlay').classList.remove('active');
+  document.getElementById('previewBody').innerHTML = '';
+}
+function openPreviewInNewTab(){
+  const data = document.getElementById('previewOverlay')._anexoData;
+  if(!data) return;
+  const blob = attBase64toBlob(data.data, data.type);
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+}
+
+// ═══ Migração de anexos antigos (base64 inline -> arquivos separados) ═══
+async function migrateAnexosToFiles(){
+  if(!isConfigured()) return;
+
+  let migrouAlgum = false;
+  let totalMigrados = 0;
+
+  for(const cot of cotacoes){
+    for(const s of (cot.fornecedores || [])){
+      if(!s.anexos || !s.anexos.length) continue;
+
+      const novosAnexos = [];
+
+      for(const anexo of s.anexos){
+        if(anexo.data && typeof anexo.data === 'string' && anexo.data.length > 100){
+          const ext = (anexo.name || 'file.bin').split('.').pop().toLowerCase();
+          const ghPath = `anexos/${cot.id}/${anexo.id}.${ext}`;
+
+          try {
+            await ghUploadFile(ghPath, anexo.data, `Migrar anexo: ${anexo.name}`);
+            await attSaveFile(anexo.id, {
+              supplierId: s.id,
+              name: anexo.name,
+              type: anexo.type,
+              data: anexo.data,
+              size: anexo.size || 0,
+              addedAt: anexo.addedAt || '',
+              path: ghPath
+            });
+            novosAnexos.push({
+              id: anexo.id,
+              name: anexo.name,
+              type: anexo.type,
+              size: anexo.size || 0,
+              path: ghPath,
+              addedAt: anexo.addedAt || new Date().toISOString()
+            });
+            totalMigrados++;
+            migrouAlgum = true;
+            console.log(`✅ Migrado: ${anexo.name} → ${ghPath}`);
+          } catch(err){
+            console.error(`❌ Falha ao migrar ${anexo.name}:`, err);
+            novosAnexos.push(anexo);
+          }
+        } else {
+          novosAnexos.push(anexo);
+        }
+      }
+
+      s.anexos = novosAnexos;
+    }
+  }
+
+  if(migrouAlgum){
+    console.log(`📦 ${totalMigrados} anexos migrados para arquivos separados.`);
+    await saveToGitHub();
+    showToast(`✅ ${totalMigrados} anexo(s) migrado(s) para arquivos separados!`, 'success');
+  }
+}
+
+/* ── SUPPLIER MODAL ── */
+function openAddModal(){ if(!activeCotacaoId){showToast('Selecione uma cotação primeiro!','error');return;} editingId=null;tempLogoBase64='';document.getElementById('modalTitle').textContent='Novo Fornecedor';clearModalFields();document.getElementById('supModal').classList.add('show'); }
+function openEditModal(id){
+  const cot=getActiveCotacao();if(!cot)return;const s=cot.fornecedores.find(x=>x.id===id);if(!s)return;
+  editingId=id;tempLogoBase64=s.logo||'';document.getElementById('modalTitle').textContent='Editar: '+s.name;
+  populateModalFields(s);document.getElementById('supModal').classList.add('show');
+}
+function closeSupModal(){document.getElementById('supModal').classList.remove('show');editingId=null;tempLogoBase64='';}
+function clearModalFields(){
+  document.getElementById('f-name').value='';document.getElementById('f-contact-name').value='';document.getElementById('f-contact-tel').value='';
+  document.getElementById('f-contact-email').value='';document.getElementById('f-status').value='Cotação recebida';
+  document.getElementById('f-payment').value='';document.getElementById('f-delivery').value='';document.getElementById('f-warranty').value='';
+  document.getElementById('f-obs').value='';document.getElementById('f-notworking').checked=false;
+  document.getElementById('notWorkingCheckbox').classList.remove('checked');
+  document.getElementById('gradesSection').style.display='';document.getElementById('gradesDisabledOverlay').classList.remove('visible');
+  ['A','B','C'].forEach(g=>{document.querySelector('#tblGrade'+g+' tbody').innerHTML='';addGradeRow(g);});
+  document.getElementById('logoPreview').innerHTML='<span style="font-weight:800;font-size:16px;color:var(--muted)">?</span>';
+  document.getElementById('logoInput').value='';tempLogoBase64='';
+  const tabs=document.querySelectorAll('.grade-tab');tabs.forEach(t=>t.className='grade-tab');tabs[0].classList.add('active-a');
+  document.querySelectorAll('.grade-panel-edit').forEach(p=>p.classList.remove('active'));
+  document.getElementById('gradePanelA').classList.add('active');
+}
+function populateModalFields(s){
+  document.getElementById('f-name').value=s.name||'';document.getElementById('f-contact-name').value=s.contactName||'';
+  document.getElementById('f-contact-tel').value=s.contactTel||'';document.getElementById('f-contact-email').value=s.contactEmail||'';
+  document.getElementById('f-status').value=s.status||'Cotação recebida';document.getElementById('f-payment').value=s.payment||'';
+  document.getElementById('f-delivery').value=s.delivery||'';document.getElementById('f-warranty').value=s.warranty||'';
+  document.getElementById('f-obs').value=s.obs||'';
+  const nw=s.notWorking||false;document.getElementById('f-notworking').checked=nw;
+  if(nw){document.getElementById('notWorkingCheckbox').classList.add('checked');document.getElementById('gradesSection').style.display='none';document.getElementById('gradesDisabledOverlay').classList.add('visible');}
+  else {document.getElementById('notWorkingCheckbox').classList.remove('checked');document.getElementById('gradesSection').style.display='';document.getElementById('gradesDisabledOverlay').classList.remove('visible');}
+  ['A','B','C'].forEach(g=>{populateGradeTable(g,(s.grades&&s.grades[g]?s.grades[g].items:[]));});
+  if(s.logo){document.getElementById('logoPreview').innerHTML=`<img src="${s.logo}" alt="Logo"/>`;tempLogoBase64=s.logo;}
+  else {document.getElementById('logoPreview').innerHTML='<span style="font-weight:800;font-size:16px;color:var(--muted)">?</span>';tempLogoBase64='';}
+  document.getElementById('logoInput').value='';
+}
+function toggleNotWorking(){
+  const cb=document.getElementById('f-notworking');const checked=cb.checked||document.getElementById('notWorkingCheckbox').classList.contains('checked');
+  if(checked){cb.checked=true;document.getElementById('notWorkingCheckbox').classList.add('checked');document.getElementById('gradesSection').style.display='none';document.getElementById('gradesDisabledOverlay').classList.add('visible');}
+  else {cb.checked=false;document.getElementById('notWorkingCheckbox').classList.remove('checked');document.getElementById('gradesSection').style.display='';document.getElementById('gradesDisabledOverlay').classList.remove('visible');}
+}
+function switchGradeTab(grade){
+  const tabs=document.querySelectorAll('.grade-tab');const idx=grade==='A'?0:grade==='B'?1:2;
+  tabs.forEach(t=>t.className='grade-tab');tabs[idx].classList.add('active-'+grade.toLowerCase());
+  document.querySelectorAll('.grade-panel-edit').forEach(p=>p.classList.remove('active'));
+  document.getElementById('gradePanel'+grade).classList.add('active');
+}
+function handleLogoUpload(event){
+  const file=event.target.files[0];if(!file)return;if(file.size>1024*1024){showToast('Arquivo muito grande. Máx. 1MB.','error');return;}
+  const reader=new FileReader();reader.onload=function(e){tempLogoBase64=e.target.result;document.getElementById('logoPreview').innerHTML=`<img src="${tempLogoBase64}" alt="Logo"/>`;};
+  reader.readAsDataURL(file);
+}
+
+/* ── GRADE TABLES ── */
+function addGradeRow(grade){
+  const tbody=document.querySelector('#tblGrade'+grade+' tbody');
+  const row=document.createElement('tr');
+  row.innerHTML=`<td class="col-marca"><input type="text" placeholder="Marca" oninput="updateRowTotal(this)"></td><td class="col-modelo"><input type="text" placeholder="Modelo" oninput="updateRowTotal(this)"></td><td class="col-proc"><input type="text" placeholder="Proc." oninput="updateRowTotal(this)"></td><td class="col-ger"><input type="text" placeholder="Ger." oninput="updateRowTotal(this)"></td><td class="col-mem"><input type="text" placeholder="Mem." oninput="updateRowTotal(this)"></td><td class="col-ssd"><input type="text" placeholder="SSD" oninput="updateRowTotal(this)"></td><td class="col-tela"><input type="text" placeholder="Tela" oninput="updateRowTotal(this)"></td><td class="col-qtd"><input type="number" min="0" value="1" oninput="updateRowTotal(this)"></td><td class="col-valor"><input type="number" min="0" step="0.01" value="0" oninput="updateRowTotal(this)"></td><td class="col-total">R$ 0,00</td><td class="col-action"><button class="row-del-btn" onclick="delGradeRow(this)">✕</button></td>`;
+  tbody.appendChild(row);
+}
+function delGradeRow(btn){const row=btn.closest('tr');if(row.parentElement.children.length<=1)return;row.remove();}
+function updateRowTotal(input){const row=input.closest('tr');const q=parseInt(row.querySelector('.col-qtd input').value)||0;const v=parseFloat(row.querySelector('.col-valor input').value)||0;row.querySelector('.col-total').textContent=fmt2(q*v);}
+function populateGradeTable(grade,items){
+  const tbody=document.querySelector('#tblGrade'+grade+' tbody');tbody.innerHTML='';
+  if(!items||!items.length){addGradeRow(grade);return;}
+  items.forEach(item=>{const row=document.createElement('tr');row.innerHTML=`<td class="col-marca"><input type="text" value="${escapeHTML(item[0]||'')}" oninput="updateRowTotal(this)"></td><td class="col-modelo"><input type="text" value="${escapeHTML(item[1]||'')}" oninput="updateRowTotal(this)"></td><td class="col-proc"><input type="text" value="${escapeHTML(item[2]||'')}" oninput="updateRowTotal(this)"></td><td class="col-ger"><input type="text" value="${escapeHTML(item[3]||'')}" oninput="updateRowTotal(this)"></td><td class="col-mem"><input type="text" value="${escapeHTML(item[4]||'')}" oninput="updateRowTotal(this)"></td><td class="col-ssd"><input type="text" value="${escapeHTML(item[5]||'')}" oninput="updateRowTotal(this)"></td><td class="col-tela"><input type="text" value="${escapeHTML(item[6]||'')}" oninput="updateRowTotal(this)"></td><td class="col-qtd"><input type="number" min="0" value="${item[7]||0}" oninput="updateRowTotal(this)"></td><td class="col-valor"><input type="number" min="0" step="0.01" value="${item[8]||0}" oninput="updateRowTotal(this)"></td><td class="col-total">${fmt2((item[7]||0)*(item[8]||0))}</td><td class="col-action"><button class="row-del-btn" onclick="delGradeRow(this)">✕</button></td>`;tbody.appendChild(row);});
+}
+function readGradeTable(grade){
+  const rows=document.querySelectorAll('#tblGrade'+grade+' tbody tr');const items=[];
+  rows.forEach(row=>{const marca=row.querySelector('.col-marca input').value.trim();const modelo=row.querySelector('.col-modelo input').value.trim();const proc=row.querySelector('.col-proc input').value.trim();const ger=row.querySelector('.col-ger input').value.trim();const mem=row.querySelector('.col-mem input').value.trim();const ssd=row.querySelector('.col-ssd input').value.trim();const tela=row.querySelector('.col-tela input').value.trim();const qtd=parseInt(row.querySelector('.col-qtd input').value)||0;const valor=parseFloat(row.querySelector('.col-valor input').value)||0;if(modelo&&qtd>0&&valor>0)items.push([marca,modelo,proc,ger,mem,ssd,tela,qtd,valor]);});
+  return items;
+}
+
+/* ── XLSX IMPORT ── */
+function handleXlsxImport(event,grade){
+  const file=event.target.files[0];if(!file)return;const reader=new FileReader();
+  reader.onload=function(e){
+    try{const data=new Uint8Array(e.target.result);const wb=XLSX.read(data,{type:'array'});const sheet=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(sheet,{header:1});let sr=0;if(rows.length>0){const first=rows[0].map(c=>String(c||'').toLowerCase().trim());if(first.some(c=>c.includes('marca')||c.includes('modelo')||c.includes('proc')))sr=1;}let imp=0;const tbody=document.querySelector('#tblGrade'+grade+' tbody');
+    for(let i=sr;i<rows.length;i++){const r=rows[i];if(!r||(!r[1]&&!r[0]))continue;const marca=String(r[0]||'').trim(),modelo=String(r[1]||'').trim(),proc=String(r[2]||'').trim(),ger=String(r[3]||'').trim(),mem=String(r[4]||'').trim(),ssd=String(r[5]||'').trim(),tela=String(r[6]||'').trim();const qtd=parseInt(r[7])||1,valor=parseFloat(r[8])||0;if(!modelo&&!marca)continue;const row=document.createElement('tr');row.innerHTML=`<td class="col-marca"><input type="text" value="${escapeHTML(marca)}" oninput="updateRowTotal(this)"></td><td class="col-modelo"><input type="text" value="${escapeHTML(modelo)}" oninput="updateRowTotal(this)"></td><td class="col-proc"><input type="text" value="${escapeHTML(proc)}" oninput="updateRowTotal(this)"></td><td class="col-ger"><input type="text" value="${escapeHTML(ger)}" oninput="updateRowTotal(this)"></td><td class="col-mem"><input type="text" value="${escapeHTML(mem)}" oninput="updateRowTotal(this)"></td><td class="col-ssd"><input type="text" value="${escapeHTML(ssd)}" oninput="updateRowTotal(this)"></td><td class="col-tela"><input type="text" value="${escapeHTML(tela)}" oninput="updateRowTotal(this)"></td><td class="col-qtd"><input type="number" min="0" value="${qtd}" oninput="updateRowTotal(this)"></td><td class="col-valor"><input type="number" min="0" step="0.01" value="${valor}" oninput="updateRowTotal(this)"></td><td class="col-total">${fmt2(qtd*valor)}</td><td class="col-action"><button class="row-del-btn" onclick="delGradeRow(this)">✕</button></td>`;tbody.appendChild(row);imp++;}
+    showToast(`✅ ${imp} equipamentos importados para Grade ${grade}!`,'success');}catch(err){showToast('❌ Erro ao ler arquivo: '+err.message,'error');}
+  };reader.readAsArrayBuffer(file);event.target.value='';
+}
+
+/* ── SAVE SUPPLIER ── */
+async function saveSupplier(){
+  const cot=getActiveCotacao();if(!cot){showToast('Selecione uma cotação primeiro!','error');return;}
+  const name=document.getElementById('f-name').value.trim();if(!name){showToast('Informe o nome do fornecedor.','error');return;}
+  const notWorking=document.getElementById('f-notworking').checked;const grades={};
+  if(!notWorking){['A','B','C'].forEach(g=>{grades[g]={desc:'',items:readGradeTable(g)};});}
+  const existingAnexos = editingId ? (cot.fornecedores.find(s=>s.id===editingId)?.anexos||[]) : [];
+  const sd={id:editingId||uid(),name,notWorking,anexos:existingAnexos,logo:tempLogoBase64,status:document.getElementById('f-status').value,contactName:document.getElementById('f-contact-name').value.trim(),contactTel:document.getElementById('f-contact-tel').value.trim(),contactEmail:document.getElementById('f-contact-email').value.trim(),date:editingId?(cot.fornecedores.find(s=>s.id===editingId)?.date||new Date().toLocaleDateString('pt-BR')):new Date().toLocaleDateString('pt-BR'),payment:document.getElementById('f-payment').value.trim(),delivery:document.getElementById('f-delivery').value.trim(),warranty:document.getElementById('f-warranty').value.trim(),obs:document.getElementById('f-obs').value.trim(),grades};
+  if(editingId){const idx=cot.fornecedores.findIndex(s=>s.id===editingId);if(idx>=0)cot.fornecedores[idx]=sd;}else{cot.fornecedores.push(sd);}
+  const ok=await saveToGitHub();closeSupModal();renderAll();if(activeCotacaoId)navigateToCotacao(activeCotacaoId);
+  showToast(ok?`"${name}" salvo no GitHub!`:`"${name}" salvo localmente. ⚠️`,ok?'success':'error');
+}
+
+/* ── DELETE SUPPLIER ── */
+async function deleteSupplier(id){
+  const cot=getActiveCotacao();if(!cot)return;const s=cot.fornecedores.find(x=>x.id===id);if(!s)return;
+  if(!confirm(`Excluir "${s.name}"?`))return;
+
+  if(s.anexos){
+    for(const a of s.anexos){
+      if(a.path && isConfigured()){ try{ await ghDeleteFile(a.path, `Remover anexo: ${a.name}`); }catch(e){} }
+      try{ await attDeleteFile(a.id); }catch(e){}
+    }
+  }
+
+  cot.fornecedores=cot.fornecedores.filter(x=>x.id!==id);
+  const ok=await saveToGitHub();renderAll();if(activeCotacaoId)navigateToCotacao(activeCotacaoId);
+  if(currentDetailId===id)closeDetail();showToast(ok?`"${s.name}" excluído.`:'Excluído localmente. ⚠️','success');
+}
+
+/* ── DETAIL MODAL ── */
+let currentDetailId=null;
+function findSupplierById(id){for(const cot of cotacoes){const s=cot.fornecedores.find(x=>x.id===id);if(s)return{cotacao:cot,supplier:s};}return null;}
+function openDetail(id){
+  const found=findSupplierById(id);if(!found)return;const{cotacao,supplier:s}=found;currentDetailId=id;
+  document.getElementById('detailTitle').textContent=s.name;
+  document.getElementById('detailSub').textContent=`${getTipoIcon(cotacao.tipo)} ${cotacao.tipo} · ${cotacao.data} · ${s.notWorking?'⚠️ Não atende':s.status} · ${s.date||'—'}`;
+  document.getElementById('detailLogo').innerHTML=s.logo?`<img src="${s.logo}" alt="${escapeHTML(s.name)}"/>`:`<span class="detail-logo-placeholder">${escapeHTML(s.name.substring(0,3).toUpperCase())}</span>`;
+  let body=`<div class="detail-section"><h3 class="sec-info">Informações Comerciais</h3><div class="info-grid"><div class="info-item"><div class="k">Contato</div><div class="v">${escapeHTML(s.contactName||'—')}</div></div><div class="info-item"><div class="k">Telefone</div><div class="v">${escapeHTML(s.contactTel||'—')}</div></div><div class="info-item"><div class="k">E-mail</div><div class="v">${escapeHTML(s.contactEmail||'—')}</div></div><div class="info-item"><div class="k">Cotação</div><div class="v">${getTipoIcon(cotacao.tipo)} ${cotacao.tipo} · ${cotacao.data}</div></div><div class="info-item"><div class="k">Pagamento</div><div class="v">${escapeHTML(s.payment||'—')}</div></div><div class="info-item"><div class="k">Entrega</div><div class="v">${escapeHTML(s.delivery||'—')}</div></div><div class="info-item"><div class="k">Garantia</div><div class="v">${escapeHTML(s.warranty||'—')}</div></div><div class="info-item"><div class="k">Modelos</div><div class="v big">${countModelsAll(s)}</div></div></div></div>`;
+  if(s.notWorking){body+=`<div class="detail-section"><h3 class="sec-info">⚠️ Não atende este perfil</h3><div class="info-item"><div class="v notice">Este fornecedor foi contatado e informou que não trabalha com este tipo de venda.</div></div></div>`;}
+  else{const grades=s.grades||{};['A','B','C'].forEach(g=>{const grade=grades[g];if(!grade||!grade.items||!grade.items.length)return;const total=grade.items.reduce((a,i)=>a+(i[7]||0)*(i[8]||0),0);const units=grade.items.reduce((a,i)=>a+(i[7]||0),0);body+=`<div class="detail-section"><h3 class="sec-${g.toLowerCase()}">Grade ${g}</h3><div class="grade-tag ${g.toLowerCase()}" data-tooltip="${g==='A'?'Premium — Estado de Novo':g==='B'?'Bom — Poucas marcas de uso':'Desgaste mais acentuado'}">GRADE ${g}</div><div style="overflow-x:auto;margin-top:10px"><table class="tbl" style="min-width:750px"><thead><tr><th>Marca</th><th>Modelo</th><th>Proc.</th><th>Ger.</th><th>Mem.</th><th>SSD</th><th>Tela</th><th>Qtd</th><th>Unit.</th><th>Total</th></tr></thead><tbody>${grade.items.map(i=>`<tr><td>${escapeHTML(i[0]||'')}</td><td>${escapeHTML(i[1]||'')}</td><td>${escapeHTML(i[2]||'')}</td><td>${escapeHTML(i[3]||'')}</td><td>${escapeHTML(i[4]||'')}</td><td>${escapeHTML(i[5]||'')}</td><td>${escapeHTML(i[6]||'')}</td><td>${i[7]||0}</td><td class="price">${fmt2(i[8]||0)}</td><td class="total">${fmt2((i[7]||0)*(i[8]||0))}</td></tr>`).join('')}</tbody><tfoot><tr><td colspan="7">${units} unidades</td><td></td><td></td><td>${fmt2(total)}</td></tr></tfoot></table></div></div>`;});}
+  if(s.obs)body+=`<div class="detail-section"><h3 class="sec-info">Observações</h3><div style="background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:14px;font-size:12.5px;color:var(--muted);line-height:1.6">${escapeHTML(s.obs)}</div></div>`;
+  if((s.anexos||[]).length){
+    body+=`<div class="detail-section"><h3 class="sec-info">📎 Anexos (${s.anexos.length})</h3>`;
+    body+=s.anexos.map(a=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f8fafc;border:1px solid var(--line);border-radius:8px;margin-bottom:4px;font-size:12px"><span>${(a.type||'').includes('pdf')?'📄':'📊'}</span><span style="flex:1;font-weight:500">${escapeHTML(a.name)}</span><span style="font-size:10px;color:var(--muted)">${formatSize(a.size||0)}</span><button class="btn sm" onclick="previewAnexo('${s.id}','${a.id}')">👁 Ver</button></div>`).join('');
+    body+=`</div>`;
+  }
+  document.getElementById('detailBody').innerHTML=body;document.getElementById('detailModal').classList.add('show');document.querySelector('.detail-box').scrollTop=0;
+}
+function closeDetail(){document.getElementById('detailModal').classList.remove('show');currentDetailId=null;}
+
+/* ── ALL ITEMS ── */
+function buildFlatItems(){
+  const items=[];cotacoes.forEach(cot=>{cot.fornecedores.forEach(s=>{if(s.notWorking)return;const grades=s.grades||{};['A','B','C'].forEach(g=>{if(grades[g]&&grades[g].items){grades[g].items.forEach((item,idx)=>{const qtd=item[7]||0,valor=item[8]||0;items.push({cotacaoId:cot.id,cotacaoTipo:cot.tipo,cotacaoData:cot.data,supplierId:s.id,supplierName:s.name,grade:g,idx,marca:item[0]||'',modelo:item[1]||'',proc:item[2]||'',ger:item[3]||'',mem:item[4]||'',ssd:item[5]||'',tela:item[6]||'',qtd,valor,total:qtd*valor,anexos:s.anexos||[]});});}});});});return items;
+}
+function sortAllItems(col){if(allItemsSort.col===col){allItemsSort.asc=!allItemsSort.asc;}else{allItemsSort.col=col;allItemsSort.asc=true;}renderAllItems();}
+function renderAllItems(){
+  const fc=document.getElementById('filter-cotacao').value,fs=document.getElementById('filter-supplier').value,fg=document.getElementById('filter-grade').value,fb=document.getElementById('filter-search').value.toLowerCase().trim();
+  const selCot=document.getElementById('filter-cotacao');const curCot=selCot.value;selCot.innerHTML='<option value="all">Todas as cotações</option>'+cotacoes.map(c=>`<option value="${c.id}">${getTipoIcon(c.tipo)} ${c.tipo} · ${c.data}</option>`).join('');selCot.value=curCot;
+  const selForn=document.getElementById('filter-supplier');const curForn=selForn.value;const allS=[];cotacoes.forEach(c=>c.fornecedores.forEach(s=>{if(!s.notWorking)allS.push(s);}));selForn.innerHTML='<option value="all">Todos os fornecedores</option>'+allS.map(s=>`<option value="${s.id}">${escapeHTML(s.name)}</option>`).join('');selForn.value=curForn;
+  let items=buildFlatItems();if(fc!=='all')items=items.filter(i=>i.cotacaoId===fc);if(fs!=='all')items=items.filter(i=>i.supplierId===fs);if(fg!=='all')items=items.filter(i=>i.grade===fg);
+  if(fb){items=items.filter(i=>i.marca.toLowerCase().includes(fb)||i.modelo.toLowerCase().includes(fb)||i.proc.toLowerCase().includes(fb)||i.ger.toLowerCase().includes(fb)||i.mem.toLowerCase().includes(fb)||i.ssd.toLowerCase().includes(fb)||i.tela.toLowerCase().includes(fb)||i.supplierName.toLowerCase().includes(fb)||i.cotacaoTipo.toLowerCase().includes(fb));}
+  if(allItemsSort.col){const col=allItemsSort.col,asc=allItemsSort.asc;items.sort((a,b)=>{let va,vb;if(col==='qtd'||col==='valor'){va=a[col]||0;vb=b[col]||0;}else{va=(a[col]||'').toString().toLowerCase();vb=(b[col]||'').toString().toLowerCase();}if(va<vb)return asc?-1:1;if(va>vb)return asc?1:-1;return 0;});}
+  allItemsFlat=items;document.getElementById('all-items-count').textContent=items.length+' equipamento'+(items.length!==1?'s':'');document.getElementById('nav-items-count').textContent=items.length+' equipamentos';
+  document.querySelectorAll('.sortable-th').forEach(th=>{th.classList.remove('active');const match=th.getAttribute('onclick')?.match(/sortAllItems\('(\w+)'\)/);if(match&&match[1]===allItemsSort.col)th.classList.add('active');});
+  const tbody=document.querySelector('#all-items-table tbody');
+  if(!items.length){tbody.innerHTML='<tr><td colspan="14" style="text-align:center;padding:32px;color:var(--muted)">Nenhum equipamento encontrado.</td></tr>';return;}
+  tbody.innerHTML=items.map(i=>{
+    const anexos = i.anexos||[];
+    const attachHTML = anexos.length ? anexos.map(a => {
+      const isPDF = (a.type||'').includes('pdf');
+      return `<span class="attach-chip" onclick="event.stopPropagation();previewAnexo('${i.supplierId}','${a.id}')" title="${escapeHTML(a.name)}"><span class="ext ${isPDF?'pdf':'xlsx'}">${isPDF?'PDF':'XLS'}</span><span>${a.name.length>12?a.name.slice(0,10)+'…':a.name}</span></span>`;
+    }).join('') : '<span style="font-size:10px;color:#cbd5e1">—</span>';
+    return `<tr><td><span style="font-size:10px;color:var(--muted)">${getTipoIcon(i.cotacaoTipo)} ${escapeHTML(i.cotacaoTipo)} · ${i.cotacaoData}</span></td><td>${escapeHTML(i.supplierName)}</td><td><span class="grade-tag ${i.grade.toLowerCase()}" data-tooltip="${i.grade==='A'?'Premium — Estado de Novo':i.grade==='B'?'Bom — Poucas marcas de uso':'Desgaste mais acentuado'}">Grade ${i.grade}</span></td><td>${escapeHTML(i.marca)}</td><td>${escapeHTML(i.modelo)}</td><td>${escapeHTML(i.proc)}</td><td>${escapeHTML(i.ger)}</td><td>${escapeHTML(i.mem)}</td><td>${escapeHTML(i.ssd)}</td><td>${escapeHTML(i.tela)}</td><td>${i.qtd}</td><td class="price">${fmt2(i.valor)}</td><td class="total">${fmt2(i.total)}</td><td><div class="attach-cell">${attachHTML}</div></td></tr>`;
+  }).join('');
+}
+
+/* ── EXPORT XLSX ── */
+function exportAllItemsXlsx(){
+  const items=buildFlatItems();if(!items.length){showToast('Nenhum equipamento para exportar.','error');return;}
+  const data=items.map(i=>({'Cotação':`${i.cotacaoTipo} · ${i.cotacaoData}`,'Fornecedor':i.supplierName,'Grade':'Grade '+i.grade,'Marca':i.marca,'Modelo':i.modelo,'Proc.':i.proc,'Ger.':i.ger,'Mem.':i.mem,'SSD':i.ssd,'Tela':i.tela,'Qtd':i.qtd,'Valor Unit.':i.valor,'Total':i.total}));
+  const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Equipamentos');
+  XLSX.writeFile(wb,`equipamentos_${new Date().toISOString().slice(0,10)}.xlsx`);showToast(`✅ Exportado (${items.length} itens)`,'success');
+}
+
+/* ── COMPARATIVO ── */
+function renderCompare(){
+  const el=document.getElementById('compare-content');
+  let suppliers=[];if(activeCotacaoId){const cot=getActiveCotacao();if(cot)suppliers=cot.fornecedores.filter(s=>!s.notWorking);}
+  if(!activeCotacaoId){el.innerHTML='<div class="empty-state"><div class="icon">◐</div><div class="title">Selecione uma cotação</div><div class="desc">O comparativo analisa os mesmos produtos entre fornecedores dentro de uma cotação ativa.</div></div>';return;}
+  if(suppliers.length<2){el.innerHTML='<div class="empty-state"><div class="icon">◐</div><div class="title">Comparativo indisponível</div><div class="desc">É necessário pelo menos 2 fornecedores ativos na cotação selecionada.</div></div>';return;}
+  const productMap={};suppliers.forEach(s=>{const grades=s.grades||{};['A','B','C'].forEach(g=>{if(grades[g]&&grades[g].items){grades[g].items.forEach(item=>{const modelo=(item[1]||'').trim().toLowerCase();const marca=(item[0]||'').trim().toLowerCase();if(!modelo)return;const key=modelo+'|||'+marca;if(!productMap[key])productMap[key]=[];productMap[key].push({supplierName:s.name,supplierId:s.id,grade:g,item});});}});});
+  const compared=Object.entries(productMap).filter(([_,e])=>{const u=new Set(e.map(x=>x.supplierId));return u.size>=2;}).sort((a,b)=>{const bestA=Math.min(...a[1].map(e=>e.item[8]||Infinity));const bestB=Math.min(...b[1].map(e=>e.item[8]||Infinity));return bestA-bestB;});
+  if(!compared.length){el.innerHTML='<div class="empty-state"><div class="icon">◐</div><div class="title">Nenhum produto em comum</div><div class="desc">Os fornecedores não possuem produtos com o mesmo modelo para comparar.</div></div>';return;}
+  el.innerHTML=compared.map(([key,entries])=>{const[modelo,marca]=key.split('|||');const dm=entries[0].item[1]||modelo;const dma=entries[0].item[0]||marca;const sorted=[...entries].sort((a,b)=>(a.item[8]||0)-(b.item[8]||0));const bestPrice=sorted[0].item[8]||0;
+    return`<div class="compare-product-card"><h4>${dma?'🏷️ '+escapeHTML(dma)+' — ':''}${escapeHTML(dm)}</h4><div class="prod-meta">${sorted.length} fornecedor(es) cotaram este produto</div>${sorted.map((entry,idx)=>{const isBest=idx===0&&sorted.length>1;const price=entry.item[8]||0;const qtd=entry.item[7]||0;const diff=isBest?'':'+'+((price-bestPrice)/bestPrice*100).toFixed(0)+'%';
+      return`<div class="compare-forn-row"><span class="forn-name">${escapeHTML(entry.supplierName)}</span><span class="forn-grade" style="background:${entry.grade==='A'?'#ecfdf5':entry.grade==='B'?'#fffbeb':'#fef2f2'};color:${entry.grade==='A'?'#047857':entry.grade==='B'?'#b45309':'#b91c1c'}">Grade ${entry.grade}</span><span class="forn-qtd">Qtd: ${qtd}</span><span class="forn-price">${fmt2(price)}</span>${isBest?'<span class="compare-best-badge">Melhor</span>':''}${!isBest&&diff!==''?`<span style="font-size:10.5px;color:var(--red);font-weight:600">${diff}</span>`:''}</div>`;}).join('')}</div>`;}).join('');
+}
+
+/* ── INSIGHTS ── */
+function renderInsights(){
+  const el=document.getElementById('insights-content');let html='';
+  let allSuppliers=[];cotacoes.forEach(c=>c.fornecedores.forEach(s=>{if(!s.notWorking)allSuppliers.push(s);}));
+  if(!allSuppliers.length){el.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="icon">✦</div><div class="title">Sem dados</div><div class="desc">Cadastre cotações e fornecedores para gerar insights.</div></div>';return;}
+  let cheapest=null,cheapestP=Infinity,biggestStock=null,biggestS=0;
+  allSuppliers.forEach(s=>{const gs=s.grades||{};['A','B','C'].forEach(k=>{if(gs[k])(gs[k].items||[]).forEach(i=>{const v=i[8]||0;if(v>0&&v<cheapestP){cheapestP=v;cheapest=i;}const q=i[7]||0;if(q>biggestS){biggestS=q;biggestStock=i;}});});});
+  const ins=[];if(cheapest)ins.push({ic:'💰',t:'Menor preço encontrado',p:`${(cheapest[0]||'')} ${(cheapest[1]||'').substring(0,35)} por ${fmt(cheapestP)}.`});
+  if(biggestStock)ins.push({ic:'📦',t:'Maior estoque',p:`${(biggestStock[0]||'')} ${(biggestStock[1]||'').substring(0,35)} com ${biggestS} unidades.`});
+  const td=[...new Set(cotacoes.map(c=>c.tipo))];ins.push({ic:'📊',t:'Tipos de cotação',p:`${td.length} tipos: ${td.map(t=>getTipoIcon(t)+' '+t).join(', ')}.`});
+  ins.push({ic:'✅',t:'Total de fornecedores ativos',p:`${allSuppliers.length} fornecedor(es) em ${cotacoes.length} cotação(ões).`});
+  html+=ins.map(i=>`<div class="insight"><div class="ic">${i.ic}</div><div><h5>${i.t}</h5><p>${i.p}</p></div></div>`).join('');
+  const periodComparisons=[];
+  td.forEach(tipo=>{const cotsDoTipo=cotacoes.filter(c=>c.tipo===tipo).sort((a,b)=>{const[da,ma,ya]=a.data.split('/').map(Number);const[db,mb,yb]=b.data.split('/').map(Number);return new Date(ya,ma-1,da)-new Date(yb,mb-1,db);});if(cotsDoTipo.length<2)return;
+    const pd=cotsDoTipo.map(cot=>{let ti=0,sp=0,mpg=Infinity;cot.fornecedores.forEach(s=>{if(s.notWorking)return;const gs=s.grades||{};['A','B','C'].forEach(g=>{if(gs[g]&&gs[g].items){gs[g].items.forEach(item=>{const p=item[8]||0;if(p>0){ti++;sp+=p;if(p<mpg)mpg=p;}});}});});return{data:cot.data,fornecedores:cot.fornecedores.filter(s=>!s.notWorking).length,mediaPreco:ti>0?sp/ti:0,menorPreco:mpg===Infinity?0:mpg,status:cot.status};});
+    const first=pd[0],last=pd[pd.length-1];let dp='',dc='';if(first.menorPreco>0&&last.menorPreco>0){const pct=((last.menorPreco-first.menorPreco)/first.menorPreco*100);dp=pct>0?`↑ ${pct.toFixed(1)}%`:`↓ ${Math.abs(pct).toFixed(1)}%`;dc=pct>0?'up':'down';}
+    periodComparisons.push({tipo,icon:getTipoIcon(tipo),periodData:pd,deltaPreco:dp,deltaClass:dc});
+  });
+  if(periodComparisons.length>0){
+    html+=`<div style="grid-column:1/-1;margin-top:4px"><h3 style="font-weight:800;font-size:15px;margin-bottom:14px;color:var(--brand)">📅 Comparativo entre Períodos</h3>`;
+    html+=periodComparisons.map(pc=>`<div class="period-comparison"><h4>${pc.icon} ${escapeHTML(pc.tipo)} <span style="font-size:10.5px;color:var(--muted);font-weight:500">— ${pc.periodData.length} cotações</span></h4>${pc.periodData.map((pd,idx)=>{const prev=idx>0?pc.periodData[idx-1]:null;let dh='';if(prev&&prev.menorPreco>0&&pd.menorPreco>0){const pct=((pd.menorPreco-prev.menorPreco)/prev.menorPreco*100);const cls=pct>0?'up':'down';dh=`<span class="period-delta ${cls}">${pct>0?'↑':'↓'} ${Math.abs(pct).toFixed(1)}%</span>`;}const si=pd.status==='concluida'?'🟢':'🟡';return`<div class="period-row"><span class="period-date">${si} ${pd.data}</span><span style="color:var(--muted);font-size:10.5px">${pd.fornecedores} forn.</span><span style="color:var(--muted);font-size:10.5px">Menor: <strong class="period-price">${pd.menorPreco?fmt(pd.menorPreco):'—'}</strong></span><span style="color:var(--muted);font-size:10.5px">Média: <strong style="color:var(--ink)">${pd.mediaPreco?fmt(pd.mediaPreco):'—'}</strong></span>${dh}</div>`;}).join('')}${pc.deltaPreco?`<div style="margin-top:10px;padding:8px 12px;background:#f8fafc;border-radius:8px;font-size:11.5px;display:flex;align-items:center;gap:8px"><span style="color:var(--muted)">Variação total:</span><span class="period-delta ${pc.deltaClass}" style="font-size:13px;font-weight:800">${pc.deltaPreco}</span><span style="color:var(--muted);font-size:10.5px">no menor preço</span></div>`:''}</div>`).join('')+'</div>';
+  }
+  el.innerHTML=html;
+}
+
+/* ── IndexedDB Cache ── */
+const ATT_DB_NAME='InfinityAttachments',ATT_DB_VER=1;let attDB;
+function attOpenDB(){return new Promise((resolve,reject)=>{const r=indexedDB.open(ATT_DB_NAME,ATT_DB_VER);r.onupgradeneeded=e=>{const d=e.target.result;if(!d.objectStoreNames.contains('files'))d.createObjectStore('files',{keyPath:'id'});};r.onsuccess=e=>{attDB=e.target.result;resolve();};r.onerror=()=>reject(r.error);});}
+async function attSaveFile(id,fileObj){await attOpenDB();return new Promise((resolve,reject)=>{const tx=attDB.transaction('files','readwrite');tx.objectStore('files').put({id,...fileObj});tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});}
+async function attGetFile(id){await attOpenDB();return new Promise((resolve,reject)=>{const tx=attDB.transaction('files','readonly');const r=tx.objectStore('files').get(id);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
+async function attDeleteFile(id){await attOpenDB();return new Promise((resolve,reject)=>{const tx=attDB.transaction('files','readwrite');tx.objectStore('files').delete(id);tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error);});}
+function attBase64toBlob(b64,mime){const byteChars=atob(b64);const byteNums=new Array(byteChars.length);for(let i=0;i<byteChars.length;i++)byteNums[i]=byteChars.charCodeAt(i);return new Blob([new Uint8Array(byteNums)],{type:mime});}
+function syncAnexosToIndexedDB(){
+  cotacoes.forEach(cot=>{cot.fornecedores.forEach(s=>{if(s.anexos){s.anexos.forEach(a=>{attSaveFile(a.id,{supplierId:s.id,name:a.name,type:a.type,data:a.data,size:a.size||0,addedAt:a.addedAt||'',path:a.path||''}).catch(()=>{});});}});});
+}
+
+/* ── KEYBOARD / CLOSE ── */
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(document.getElementById('previewOverlay').classList.contains('active'))closePreview();else if(document.getElementById('detailModal').classList.contains('show'))closeDetail();else if(document.getElementById('supModal').classList.contains('show'))closeSupModal();else if(document.getElementById('cotacaoModal').classList.contains('show'))closeCotacaoModal();else if(document.getElementById('configModal').classList.contains('show'))closeConfigModal();}});
+document.getElementById('detailModal').addEventListener('click',function(e){if(e.target===this)closeDetail();});
+document.getElementById('supModal').addEventListener('click',function(e){if(e.target===this)closeSupModal();});
+document.getElementById('cotacaoModal').addEventListener('click',function(e){if(e.target===this)closeCotacaoModal();});
+document.getElementById('configModal').addEventListener('click',function(e){if(e.target===this)closeConfigModal();});
+
+/* ── INIT ── */
+(async function init(){
+  applyPresetConfig();
+  if(isConfigured()){const ok=await loadFromGitHub();if(!ok)showToast('Falha ao carregar do GitHub.','error');}
+  else{updateSyncStatus(false);}
+  if(!cotacoes.length)renderAll();
+  updateNavCounts();
+})();
+</script>
+</body>
+</html>
