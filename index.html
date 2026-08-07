@@ -842,6 +842,12 @@ body{
   <div class="modal-box">
     <h2 id="modalTitle">Novo Fornecedor</h2>
     <p class="sub">Preencha os dados do fornecedor e os equipamentos disponíveis</p>
+    <div class="field" id="existingSupplierWrap">
+  <label>Usar Fornecedor Já Cadastrado <span style="color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">(opcional)</span></label>
+  <select id="f-existing-supplier" onchange="applyExistingSupplier(this.value)">
+    <option value="">— Cadastrar novo fornecedor —</option>
+  </select>
+</div>
     <div class="field"><label>Nome / Razão Social *</label><input type="text" id="f-name" placeholder="Ex: TechSupply Ltda"/></div>
     <div class="field-row"><div class="field"><label>Nome do Contato</label><input type="text" id="f-contact-name" placeholder="Ex: João Silva"/></div><div class="field"><label>Telefone</label><input type="text" id="f-contact-tel" placeholder="Ex: (11) 99999-9999"/></div><div class="field"><label>E-mail</label><input type="email" id="f-contact-email" placeholder="Ex: joao@tech.com"/></div></div>
     <div class="field-row-2"><div class="field"><label>Status</label><select id="f-status"><option value="Cotação recebida">Cotação recebida</option><option value="Em negociação">Em negociação</option><option value="Aguardando resposta">Aguardando resposta</option><option value="Finalizado">Finalizado</option></select></div><div class="field"><label>Logo do Fornecedor</label><div class="logo-upload-area" onclick="document.getElementById('logoInput').click()"><div class="logo-upload-preview" id="logoPreview" style="width:44px;height:44px"><span style="font-weight:800;font-size:16px;color:var(--muted)">?</span></div><div class="logo-upload-info"><strong>Clique</strong> · PNG/JPG/SVG · Máx 1MB</div><input type="file" id="logoInput" class="logo-upload-input" accept="image/png,image/jpeg,image/svg+xml" onchange="handleLogoUpload(event)"/></div></div></div>
@@ -1202,6 +1208,49 @@ function closeCotacaoModal(){
   document.getElementById('cotacaoModal').classList.remove('show');
   editingCotacaoId = null;
 }
+
+function getUniqueSuppliersList(){
+  const map = new Map(); // nome (lowercase) -> dados mais recentes
+  cotacoes.forEach(cot=>{
+    cot.fornecedores.forEach(s=>{
+      const key = (s.name||'').trim().toLowerCase();
+      if(!key) return;
+      // mantém sempre a versão mais completa/recente encontrada
+      map.set(key, s);
+    });
+  });
+  return Array.from(map.values()).sort((a,b)=>a.name.localeCompare(b.name,'pt-BR'));
+}
+
+function populateExistingSupplierSelect(){
+  const sel = document.getElementById('f-existing-supplier');
+  const list = getUniqueSuppliersList();
+  sel.innerHTML = '<option value="">— Cadastrar novo fornecedor —</option>' +
+    list.map(s=>`<option value="${escapeHTML(s.name)}">${escapeHTML(s.name)}</option>`).join('');
+}
+
+function applyExistingSupplier(name){
+  if(!name) return;
+  const list = getUniqueSuppliersList();
+  const s = list.find(x=>x.name===name);
+  if(!s) return;
+
+  document.getElementById('f-name').value = s.name || '';
+  document.getElementById('f-contact-name').value = s.contactName || '';
+  document.getElementById('f-contact-tel').value = s.contactTel || '';
+  document.getElementById('f-contact-email').value = s.contactEmail || '';
+  document.getElementById('f-payment').value = s.payment || '';
+  document.getElementById('f-delivery').value = s.delivery || '';
+  document.getElementById('f-warranty').value = s.warranty || '';
+
+  if(s.logo){
+    tempLogoBase64 = s.logo;
+    document.getElementById('logoPreview').innerHTML = `<img src="${s.logo}" alt="Logo"/>`;
+  }
+
+  showToast('Dados do fornecedor preenchidos. Ajuste preços e grades conforme esta cotação.', 'success');
+}
+
 
 /* ── COTACAO MODAL ── */
 function toggleConclusaoField(){
@@ -1701,12 +1750,24 @@ async function migrateAnexosToFiles(){
 }
 
 /* ── SUPPLIER MODAL ── */
-function openAddModal(){ if(!activeCotacaoId){showToast('Selecione uma cotação primeiro!','error');return;} editingId=null;tempLogoBase64='';document.getElementById('modalTitle').textContent='Novo Fornecedor';clearModalFields();document.getElementById('supModal').classList.add('show'); }
+function openAddModal(){
+  if(!activeCotacaoId){showToast('Selecione uma cotação primeiro!','error');return;}
+  editingId=null;tempLogoBase64='';
+  document.getElementById('modalTitle').textContent='Novo Fornecedor';
+  clearModalFields();
+  document.getElementById('existingSupplierWrap').style.display='';
+  document.getElementById('f-existing-supplier').value='';
+  populateExistingSupplierSelect();
+  document.getElementById('supModal').classList.add('show');
+}
+
 function openEditModal(id){
   const cot=getActiveCotacao();if(!cot)return;const s=cot.fornecedores.find(x=>x.id===id);if(!s)return;
   editingId=id;tempLogoBase64=s.logo||'';document.getElementById('modalTitle').textContent='Editar: '+s.name;
+  document.getElementById('existingSupplierWrap').style.display='none';
   populateModalFields(s);document.getElementById('supModal').classList.add('show');
 }
+
 function closeSupModal(){document.getElementById('supModal').classList.remove('show');editingId=null;tempLogoBase64='';}
 function clearModalFields(){
   document.getElementById('f-name').value='';document.getElementById('f-contact-name').value='';document.getElementById('f-contact-tel').value='';
