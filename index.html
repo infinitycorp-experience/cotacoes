@@ -1198,6 +1198,10 @@ async function testAndSaveConfig(){
     else { const err=await resp.json(); showToast('❌ Erro: '+(err.message||'Verifique as credenciais'),'error'); updateSyncStatus(false); }
   } catch(e){ showToast('❌ Erro de conexão: '+e.message,'error'); updateSyncStatus(false); }
 }
+function closeCotacaoModal(){
+  document.getElementById('cotacaoModal').classList.remove('show');
+  editingCotacaoId = null;
+}
 
 /* ── COTACAO MODAL ── */
 function toggleConclusaoField(){
