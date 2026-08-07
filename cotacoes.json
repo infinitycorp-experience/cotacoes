@@ -373,7 +373,9 @@
         "anexos": []
       }
     ],
-    "status": "concluida"
+    "status": "concluida",
+    "nome": "Compra de Equipamentos Usados",
+    "dataConclusao": "24/07/2026"
   },
   {
     "id": "id-1785856244168-yewrej",
@@ -747,6 +749,17 @@
         },
         "anexos": []
       }
-    ]
+    ],
+    "nome": "Liotécnica - PC Industrial - 8 Unidades",
+    "dataConclusao": "04/08/2026"
+  },
+  {
+    "id": "id-1786109494905-bs5sot",
+    "tipo": "Notebooks",
+    "nome": "Teste",
+    "data": "07/08/2026",
+    "status": "em_andamento",
+    "dataConclusao": "",
+    "fornecedores": []
   }
 ]
